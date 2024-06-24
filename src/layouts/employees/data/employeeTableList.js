@@ -278,6 +278,7 @@ const leadrshipTableList = () => {
         <Table>
           <TableHead style={{ display: "table-header-group" }}>
             <TableRow>
+              <TableCell>Member Id</TableCell>
               <TableCell>Profile</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Designation</TableCell>
@@ -293,6 +294,7 @@ const leadrshipTableList = () => {
             {newsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
               <React.Fragment key={item.email_id}>
                 <TableRow>
+                  <TableCell>{item.employeeId}</TableCell>
                   <TableCell>{<Avatar alt="Image" src={item.profile_image}></Avatar>}</TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.designation}</TableCell>

@@ -173,7 +173,7 @@ export default function App() {
             color={sidenavColor}
             // brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brand={jharkhandLogo}
-            brandName="JSNEFG"
+            brandName="JSNGEF"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
