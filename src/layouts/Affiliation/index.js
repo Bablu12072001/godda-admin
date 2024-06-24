@@ -30,7 +30,7 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/employees/data/employeesTableData";
+import authorsTableData from "layouts/employees/data/employeeTableList";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import { useRouter } from "hooks";
 import WeeklyNoticeList from "./data/Affiliation-List";

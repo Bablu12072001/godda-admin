@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Grid, List, ListItem, ListItemText, IconButton, Box } from "@mui/material";
+import { TextField, Button, Container, Typography, Grid, List, ListItem, ListItemText, IconButton, Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { accessToken } from "services/variables";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NewsEventUploadForm = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +13,8 @@ const NewsEventUploadForm = () => {
     author: "",
   });
 
-  const [base64Images, setBase64Images] = useState([]);
-  const [images, setImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false); // State for upload operation loading
 
   const handleInputChange = (e) => {
     setFormData({
@@ -21,31 +22,6 @@ const NewsEventUploadForm = () => {
       [e.target.name]: e.target.value,
     });
   };
-
-  // const handleImageChange = async (e) => {
-  //   const selectedImages = Array.from(e.target.files);
-
-  //   const promises = selectedImages.map(async (image) => {
-  //     return new Promise((resolve, reject) => {
-  //       const reader = new FileReader();
-  //       reader.onloadend = () => {
-  //         const base64 = reader.result.split(",")[1];
-  //         resolve(base64);
-  //       };
-  //       reader.onerror = reject;
-  //       reader.readAsDataURL(image);
-  //     });
-  //   });
-
-  //   try {
-  //     const base64Results = await Promise.all(promises);
-
-  //     setBase64Images((prevImages) => [...prevImages, ...base64Results]);
-  //     setImages((prevImages) => [...prevImages, ...selectedImages]);
-  //   } catch (error) {
-  //     console.error("Error converting images to base64:", error);
-  //   }
-  // };
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -59,6 +35,7 @@ const NewsEventUploadForm = () => {
   };
 
   const handleSubmit = async () => {
+    setUploading(true); // Set uploading state to true before upload
     const base64Array = await Promise.all(selectedFiles.map((file) => convertImageToBase64(file)));
     console.log(base64Array);
     try {
@@ -83,10 +60,13 @@ const NewsEventUploadForm = () => {
         content: "",
         author: "",
       });
-      setBase64Images([]);
-      setImages([]);
+      setSelectedFiles([]);
+      toast.success("Blog submitted successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Failed to submit blog!");
+    } finally {
+      setUploading(false); // Set uploading state to false after upload (success or failure)
     }
   };
 
@@ -130,16 +110,19 @@ const NewsEventUploadForm = () => {
               </ListItem>
             ))}
           </List>
-          <Button
-            style={{ color: "black" }}
-            variant="outlined"
-            color="primary"
-            onClick={handleSubmit}
-            // disabled={!formData.title || !formData.content || base64Images.length === 0}
-          >
-            Submit
-          </Button>
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button
+              style={{ color: "black" }}
+              variant="outlined"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={uploading} // Disable button if uploading
+            >
+              {uploading ? <CircularProgress size={24} /> : "Submit"}
+            </Button>
+          </Box>
         </form>
+        <ToastContainer />
       </Container>
     </DashboardLayout>
   );

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Button, Typography, Container, Grid, Paper, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Box } from "@mui/material";
+import { Button, Typography, Container, Grid, Paper, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { accessToken } from "services/variables";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { apiUrl } from "Constants";
+
 const ImageUploadForm = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [imageType, setImageType] = useState("gallery");
+  const [loading, setLoading] = useState(false); // Added loading state
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -32,56 +33,47 @@ const ImageUploadForm = () => {
     color: "black",
   };
 
-const getPresignedUrls=async()=>{
-  const response = await axios.post(
-    "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_presigned",
-    {
-      type: imageType,
-      file_name: galleryImages.map((file) => file.name),
-    },
-    {
-      headers: {
-        Authorization: accessToken(),
+  const getPresignedUrls = async () => {
+    const response = await axios.post(
+      "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_presigned",
+      {
+        type: imageType,
+        file_name: galleryImages.map((file) => file.name),
       },
-    }
-  );
-
-
- return response.data["body-json"].body;
-}
-
-
-const callPutApi=async(url,file)=>{
-     console.log("under call put api's file:",file);
-
-  try {
-   const res= await axios.put(url, file, {
-      headers: {
-        "Content-Type": file.type
+      {
+        headers: {
+          Authorization: accessToken(),
+        },
       }
-   });
-return res;
-  } catch (error) {
-    console.error(`Error uploading file ${ file.name }:`, error);
-  }
+    );
 
-}
+    return response.data["body-json"].body;
+  };
+
+  const callPutApi = async (url, file) => {
+    try {
+      const res = await axios.put(url, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+      return res;
+    } catch (error) {
+      console.error(`Error uploading file ${file.name}:`, error);
+    }
+  };
 
   const handleGalleryUpload = async () => {
+    setLoading(true); // Set loading to true when the upload starts
     try {
-      const presignedUrlsData=await getPresignedUrls();
-      console.log("PresignedUrls",presignedUrlsData);
-      var cleanUrls=[];
-      console.log("CleanUrls:",cleanUrls);
+      const presignedUrlsData = await getPresignedUrls();
+      const cleanUrls = [];
 
-
-      for(let i=0;i<presignedUrlsData.length;i++){
-        const temp=await callPutApi(presignedUrlsData[i],galleryImages[i]);
-             console.log("under loop temp",temp);
-             cleanUrls[i]=presignedUrlsData[i].split("?")[0];
+      for (let i = 0; i < presignedUrlsData.length; i++) {
+        await callPutApi(presignedUrlsData[i], galleryImages[i]);
+        cleanUrls[i] = presignedUrlsData[i].split("?")[0];
       }
 
-     
       const uploadResponse = await axios.post(
         "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_images",
         {
@@ -95,27 +87,21 @@ return res;
         }
       );
 
-      console.log("Main response",uploadResponse.data);
-
-      // Show success message
       setSnackbarMessage("Images uploaded successfully!");
       setOpenSnackbar(true);
-
-      // Clear file input
       setGalleryImages([]);
     } catch (error) {
       console.error("Error uploading gallery images:", error);
-
-      // Show error message
       setSnackbarMessage("Error uploading images. Please try again.");
       setOpenSnackbar(true);
+    } finally {
+      setLoading(false); // Set loading to false after the upload is complete
     }
   };
 
   const handleGalleryImageChange = (event) => {
     const files = event.target.files;
     const filesArray = Array.from(files);
-
     setGalleryImages(filesArray);
   };
 
@@ -141,7 +127,7 @@ return res;
                 <Select value={imageType} onChange={handleTypeChange}>
                   <MenuItem value="gallery">Gallery</MenuItem>
                   <MenuItem value="press">Press</MenuItem>
-                  <MenuItem value="glorious">Glorious Moments</MenuItem>
+                  <MenuItem value="Glorious Moments">Glorious Moments</MenuItem>
                 </Select>
               </FormControl>
               <input
@@ -156,9 +142,9 @@ return res;
                 color="primary"
                 onClick={handleGalleryUpload}
                 style={uploadButtonStyle}
-                disabled={galleryImages.length === 0} // Disable if no files selected
+                disabled={galleryImages.length === 0 || loading} // Disable if no files selected or loading
               >
-                Upload
+                {loading ? <CircularProgress size={24} /> : "Upload"}
               </Button>
               <Box mt={2}>
                 {galleryImages.map((file, index) => (

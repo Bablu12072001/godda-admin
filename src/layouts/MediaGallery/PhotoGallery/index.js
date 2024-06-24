@@ -22,8 +22,7 @@ import Auth from "Auth";
 
 const Gallery = () => {
   const navigate = useNavigate();
-const {token}=Auth();
-console.log("token from delete image:",token);
+  const { token } = Auth();
   const [galleryData, setGalleryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
@@ -36,19 +35,16 @@ console.log("token from delete image:",token);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Set loading state to true before API call
+      setLoading(true);
       try {
         const response = await axios.get("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_galery_images_all_data");
-
         setGalleryData(response.data.body);
-        console.log("Photo Gallary  images", response.data.body);
       } catch (error) {
         console.error("Error fetching gallery data:", error);
       } finally {
-        setLoading(false); // Set loading state to false after API call
+        setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -60,33 +56,27 @@ console.log("token from delete image:",token);
     setCurrentPage(value);
   };
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, itemId) => {
     setAnchorEl(event.currentTarget);
+    setSelectedItemId(itemId);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleDeleteClick = (itemId) => {
+  const handleDeleteClick = () => {
     setDeleteDialogOpen(true);
-    setSelectedItemId(itemId);
     handleMenuClose();
   };
 
   const handleDeleteConfirm = async () => {
-    console.log("Deleting item with ID:", selectedItemId);
     setDeleteLoading(true);
     try {
-      const response = await axios.delete(`https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_delete`, {
-        headers: {
-          Authorization: token    
-            },
-        data: {
-          id: selectedItemId, 
-        },
+      await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_delete", {
+        data: { id: selectedItemId },
+        headers: { Authorization: token },
       });
-      console.log("Delete response:", response.data);
       setGalleryData((prevData) => prevData.filter((item) => item.id !== selectedItemId));
       setDeleteDialogOpen(false);
     } catch (error) {
@@ -109,20 +99,11 @@ console.log("token from delete image:",token);
 
   return (
     <Container>
-      <Button
-        variant="outlined"
-        onClick={handleImageUpload}
-        style={{ marginBottom: "20px", color: "red" }}
-        disabled={addImageLoading} // Disable button while uploading image
-      >
-        {addImageLoading ? (
-          <CircularProgress size={20} /> // Show circular progress if uploading image
-        ) : (
-          "Add Image"
-        )}
+      <Button variant="outlined" onClick={handleImageUpload} style={{ marginBottom: "20px", color: "red" }} disabled={addImageLoading}>
+        {addImageLoading ? <CircularProgress size={20} /> : "Add Image"}
       </Button>
       {loading ? (
-        <CircularProgress /> // Show loading indicator if data is being fetched
+        <CircularProgress />
       ) : (
         <Grid container spacing={2}>
           {currentItems.map((item) => (
@@ -132,9 +113,7 @@ console.log("token from delete image:",token);
                   overflow: "hidden",
                   transition: "transform 0.2s",
                   position: "relative",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
+                  "&:hover": { transform: "scale(1.05)" },
                 }}
               >
                 <CardMedia
@@ -146,10 +125,8 @@ console.log("token from delete image:",token);
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/300?text=Image+Not+Available";
-                  }} // Fallback to a placeholder image on error
+                  }}
                 />
-                {/* {console.log("media images ", item.imageUrl)} */}
-
                 <IconButton
                   aria-label="more"
                   aria-controls="menu"
@@ -166,13 +143,9 @@ console.log("token from delete image:",token);
                   onClose={handleMenuClose}
                   anchorOrigin={{ vertical: "top", horizontal: "right" }}
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  PaperProps={{
-                    sx: {
-                      width: 150,
-                    },
-                  }}
+                  PaperProps={{ sx: { width: 150 } }}
                 >
-                  <MenuItem onClick={() => handleDeleteClick(item.id)}>
+                  <MenuItem onClick={handleDeleteClick}>
                     <IconButton aria-label="delete" color="inherit">
                       <DeleteIcon />
                     </IconButton>
@@ -191,7 +164,6 @@ console.log("token from delete image:",token);
         color="primary"
         style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
       />
-
       <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
         <DialogTitle>Are you sure you want to delete this item?</DialogTitle>
         <DialogActions>
@@ -199,11 +171,7 @@ console.log("token from delete image:",token);
             Cancel
           </Button>
           <Button onClick={handleDeleteConfirm} color="primary" disabled={deleteLoading}>
-            {deleteLoading ? (
-              <CircularProgress size={20} /> // Show circular progress if deleting
-            ) : (
-              "Delete"
-            )}
+            {deleteLoading ? <CircularProgress size={20} /> : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -30,7 +30,7 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/employees/data/employeesTableData";
+import authorsTableData from "layouts/employees/data/employeeTableList";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import { useRouter } from "hooks";
 import EnquiryListPage from "./data/enquiriesTable";
@@ -44,7 +44,7 @@ function EnquiriesTables() {
     // router.push("/data/addEmployee");
     // router.push("/tables");
     // router.push("/data/employeeAdd");
-    router.push("/employeeAdd");
+    router.push("/officeAdd");
   };
 
   return (
@@ -68,20 +68,14 @@ function EnquiriesTables() {
                 alignItems="center" // Align items vertically
               >
                 <MDTypography variant="h6" color="white">
-                  Enquiries List
+                  Office List
                 </MDTypography>
-                {/* <Button variant="contained" color="white" onClick={handleAddEmployee}>
-                  Employee Add
-                </Button> */}
+                <Button variant="contained" color="white" onClick={handleAddEmployee}>
+                  Office Add
+                </Button>
               </MDBox>
               <MDBox pt={3}>
-                <EnquiryListPage
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
+                <EnquiryListPage table={{ columns, rows }} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
               </MDBox>
               {/* <MDBox pt={3}>
                 <DataTable

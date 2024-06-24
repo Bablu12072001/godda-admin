@@ -30,21 +30,18 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/employees/data/employeeTableList";
+import AllMemberList from "layouts/AllMember/data/allmember";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import { useRouter } from "hooks";
-import ContactListPage from "./data/contacts";
 
-function ContactsTables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
+function EmployeeTables() {
   const router = useRouter();
 
   const handleAddEmployee = () => {
     // router.push("/data/addEmployee");
     // router.push("/tables");
     // router.push("/data/employeeAdd");
-    router.push("/employeeAdd");
+    router.push("/memberAdd");
   };
 
   return (
@@ -68,24 +65,13 @@ function ContactsTables() {
                 alignItems="center" // Align items vertically
               >
                 <MDTypography variant="h6" color="white">
-                  Contact List
+                  Members Table
                 </MDTypography>
-                {/* <Button variant="contained" color="white" onClick={handleAddEmployee}>
-                  Employee Add
-                </Button> */}
-              </MDBox>
-              <MDBox pt={3}>
-                <ContactListPage table={{ columns, rows }} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
               </MDBox>
               {/* <MDBox pt={3}>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
+                <DataTable table={{ columns, rows }} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
               </MDBox> */}
+              <AllMemberList />
             </Card>
           </Grid>
           {/* <Grid item xs={12}>
@@ -122,4 +108,4 @@ function ContactsTables() {
   );
 }
 
-export default ContactsTables;
+export default EmployeeTables;

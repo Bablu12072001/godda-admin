@@ -14,9 +14,6 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-// import Grid from "@mui/material/Grid";
-// import Card from "@mui/material/Card";
-
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -27,17 +24,12 @@ import {
   MenuItem,
   TextField,
   CardHeader,
-  InputLabel,
   Typography,
   CardContent,
   CardActions,
-  FormControl,
-  Select,
-  Radio,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
   CircularProgress,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 
 // Material Dashboard 2 React components
@@ -55,27 +47,20 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import BackButton from "components/BackButton";
 
-// Data
-// import authorsTableData from "layouts/tables/data/authorsTableData";
-// import projectsTableData from "layouts/tables/data/projectsTableData";
-
 function EmployeeAdd() {
-  //   const { columns, rows } = authorsTableData();
-  //   const { columns: pColumns, rows: pRows } = projectsTableData();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
-    gender: "Male",
-    dateOfBirth: "",
+
     creator_email: "raushansinghd2003@gmail.com",
     creator_role: "admin",
-    role: "staff",
+
     password: "admin@1234",
-    maritalStatus: "No",
+
     department: "",
     designation: "",
-    salary: "",
+
     joiningDate: "",
     contactNumber: "",
     address: {
@@ -84,14 +69,26 @@ function EmployeeAdd() {
       city: "",
       state: "",
     },
-    qualification: "",
-    experience: "",
-    emergencyContact: "",
-    bankDetails: {
-      accountNo: "",
-      ifsc: "",
-    },
     email: "",
+    officeLevel: "",
+    officeName: "",
+    subDivision: "",
+    block: "",
+    lastSixDigitOfAadhar: "",
+    parentalUnion: "",
+    yearlyMemberFreeRemitted: "",
+    district: "",
+    employeeType: "",
+
+    declaration: false,
+    sign: {
+      name: "",
+      base64: "",
+    },
+    image: {
+      name: "",
+      base64: "",
+    },
   });
 
   const handleInputChange = (prop) => (event) => {
@@ -112,17 +109,27 @@ function EmployeeAdd() {
     }
   };
 
+  const handleFileInputChange = (prop) => (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          [prop]: {
+            name: file.name,
+            base64: reader.result.split(",")[1], // Remove data url prefix
+          },
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Set loading to true to show the circular progress
-
-      // const token =
-      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhdXNoYW5zaW5naGQyMDAzQGdtYWlsLmNvbSIsIm5hbWUiOiJSYXVzaGFuIEt1bWFyIiwiZ2VuZGVyIjoiTWFsZSIsInJvbGUiOiJhZG1pbiIsImNvbnRhY3ROdW1iZXIiOiI2MjAwMTE3NTc4IiwiZGVzaWduYXRpb24iOiJTb2Z0d2FyZSBkZXZlbG92ZXIiLCJkZXBhcnRtZW50IjoiQkNBIiwiaWF0IjoxNzA3Mjk2Mjc5LCJleHAiOjE3MDk4ODgyNzl9.f43rlVnP5DsXIagjfEiD6P9EtYsNwwL9z-87y8wTQM8"; // Your token here
-      // const headers = {
-      //   Authorization: token,
-      // };
       setLoading(true);
 
       // Make the POST request using Axios
@@ -134,14 +141,47 @@ function EmployeeAdd() {
 
       if (response.data["body-json"].statusCode === 200) {
         toast.success(response.data["body-json"].body);
+        setFormData({
+          name: "",
+          creator_email: "raushansinghd2003@gmail.com",
+          creator_role: "admin",
+          password: "admin@1234",
+          department: "",
+          designation: "",
+          joiningDate: "",
+          contactNumber: "",
+          address: {
+            village: "",
+            pincode: "",
+            city: "",
+            state: "",
+          },
+          email: "",
+          officeLevel: "",
+          officeName: "",
+          subDivision: "",
+          block: "",
+          lastSixDigitOfAadhar: "",
+          parentalUnion: "",
+          yearlyMemberFreeRemitted: "",
+          district: "",
+          employeeType: "",
+          declaration: false,
+          sign: {
+            name: "",
+            base64: "",
+          },
+          image: {
+            name: "",
+            base64: "",
+          },
+        });
       } else {
         toast.error(response.data["body-json"].body);
       }
     } catch (error) {
       // Handle errors
       console.error("Error:", error);
-
-      // You can display a generic error message here
       toast.error("An error occurred. Please try again.");
     } finally {
       // Set loading to false after the API call is complete
@@ -149,30 +189,31 @@ function EmployeeAdd() {
     }
   };
 
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-
-  //     // TODO: Add validation logic if needed
-
-  //     // Make the POST request using Axios
-  //     axios
-  //       .post(
-  //         "https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_employee_register",
-  //         formData
-  //       )
-  //       .then((response) => {
-  //         // Handle the response as needed
-  //         console.log("Response:", response.data);
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         console.error("Error:", error);
-  //       });
-  //   };
-
+  // const handleOfficeLevelChange = (event) => {
+  //   const selectedOfficeLevel = event.target.value;
+  //   setFormData({
+  //     ...formData,
+  //     officeLevel: selectedOfficeLevel,
+  //     subDivision: "",
+  //     block: "",
+  //   });
+  // };
+  const handleOfficeLevelChange = (event) => {
+    const selectedOfficeLevel = event.target.value;
+    setFormData({
+      ...formData,
+      officeLevel: selectedOfficeLevel,
+      subDivision: "", // Reset subDivision when officeLevel changes
+      block: "",
+    });
+  };
+  const handleCheckboxChange = (e, setState) => {
+    setState(e.target.checked);
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
+      <ToastContainer />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
@@ -205,46 +246,8 @@ function EmployeeAdd() {
                       <Grid item xs={12} sm={6}>
                         <TextField fullWidth label="Name" placeholder="Name" value={formData.name} onChange={handleInputChange("name")} required />
                       </Grid>
-                      {/* <Grid item xs={12} sm={6}>
-                        <FormControl component="fieldset">
-                          <FormLabel component="legend">Gender</FormLabel>
-                          <RadioGroup
-                            row
-                            defaultValue="male"
-                            aria-label="gender"
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleInputChange("gender")}
-                            required
-                          >
-                            <FormControlLabel value="male" label="Male" control={<Radio />} />
-                            <FormControlLabel value="female" label="Female" control={<Radio />} />
-                            <FormControlLabel value="other" label="Other" control={<Radio />} />
-                          </RadioGroup>
-                        </FormControl>
-                      </Grid> */}
 
-                      <Grid item xs={12} sm={6}>
-                        <TextField fullWidth label="Gender" select value={formData.gender} onChange={handleInputChange("gender")} required>
-                          <MenuItem value="Male">Male</MenuItem>
-                          <MenuItem value="Female">Female</MenuItem>
-                          <MenuItem value="Other">Other</MenuItem>
-                        </TextField>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Date of Birth"
-                          type="date"
-                          value={formData.dateOfBirth}
-                          onChange={handleInputChange("dateOfBirth")}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
+                      {/* <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
                           label="Creator Email"
@@ -253,18 +256,37 @@ function EmployeeAdd() {
                           onChange={handleInputChange("creator_email")}
                           required
                         />
-                      </Grid>
-                      {/* Add other input fields similarly */}
+                      </Grid> */}
                       <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Department"
-                          placeholder="Department"
-                          value={formData.department}
-                          onChange={handleInputChange("department")}
-                          required
-                        />
+                        <TextField fullWidth label="Office Level" select value={formData.officeLevel} onChange={handleOfficeLevelChange} required>
+                          <MenuItem value="district">District</MenuItem>
+                          <MenuItem value="subDivision">Sub-Division</MenuItem>
+                          <MenuItem value="block">Block</MenuItem>
+                        </TextField>
                       </Grid>
+
+                      {formData.officeLevel === "subDivision" && (
+                        <Grid item xs={12} sm={6}>
+                          <TextField fullWidth label="Sub Division" select value={formData.subDivision} onChange={handleInputChange("subDivision")} required>
+                            <MenuItem value="godda sadar">Godda Sadar</MenuItem>
+                            <MenuItem value="mahagama">Mahagama</MenuItem>
+                          </TextField>
+                        </Grid>
+                      )}
+                      {formData.officeLevel === "block" && (
+                        <Grid item xs={12} sm={6}>
+                          <TextField fullWidth label="Block" select value={formData.block} onChange={handleInputChange("block")} required>
+                            <MenuItem value="basantrai">Basantrai</MenuItem>
+                            <MenuItem value="boarijore">Boarijore</MenuItem>
+                            <MenuItem value="bodda">Godda</MenuItem>
+                            <MenuItem value="bahagama">Mahagama</MenuItem>
+                            <MenuItem value="beharma">Meharma</MenuItem>
+                            <MenuItem value="bathergama">Pathergama</MenuItem>
+                            <MenuItem value="boraiyahat">Poraiyahat</MenuItem>
+                            <MenuItem value="bunderpahari">Sunderpahari</MenuItem>
+                          </TextField>
+                        </Grid>
+                      )}
                       <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
@@ -275,17 +297,7 @@ function EmployeeAdd() {
                           required
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Salary"
-                          placeholder="Salary"
-                          type="number"
-                          value={formData.salary}
-                          onChange={handleInputChange("salary")}
-                          required
-                        />
-                      </Grid>
+
                       <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
@@ -307,6 +319,36 @@ function EmployeeAdd() {
                           type="tel"
                           value={formData.contactNumber}
                           onChange={handleInputChange("contactNumber")}
+                          required
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          fullWidth
+                          label="Department"
+                          placeholder="Department"
+                          value={formData.department}
+                          onChange={handleInputChange("department")}
+                          required
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          fullWidth
+                          label="District"
+                          placeholder="District"
+                          value={formData.district}
+                          onChange={handleInputChange("district")}
+                          required
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          fullWidth
+                          label="Office Name"
+                          placeholder="Office Name"
+                          value={formData.officeName}
+                          onChange={handleInputChange("officeName")}
                           required
                         />
                       </Grid>
@@ -356,58 +398,43 @@ function EmployeeAdd() {
                           required
                         />
                       </Grid>
-                      {/* Add other input fields similarly */}
+
                       <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
-                          label="Qualification"
-                          placeholder="Qualification"
-                          value={formData.qualification}
-                          onChange={handleInputChange("qualification")}
+                          label="Last Six Digits of Aadhar"
+                          placeholder="Last Six Digits of Aadhar"
+                          value={formData.lastSixDigitOfAadhar}
+                          onChange={handleInputChange("lastSixDigitOfAadhar")}
                           required
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
-                          label="Experience"
-                          placeholder="Experience"
-                          value={formData.experience}
-                          onChange={handleInputChange("experience")}
+                          label="Parental Union"
+                          placeholder="Parental Union"
+                          value={formData.parentalUnion}
+                          onChange={handleInputChange("parentalUnion")}
                           required
                         />
                       </Grid>
+
                       <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Emergency Contact"
-                          placeholder="Emergency Contact"
-                          type="tel"
-                          value={formData.emergencyContact}
-                          onChange={handleInputChange("emergencyContact")}
-                          required
-                        />
+                        <TextField fullWidth label="Employee Type" select value={formData.employeeType} onChange={handleInputChange("employeeType")} required>
+                          <MenuItem value="regular">Regular</MenuItem>
+                          <MenuItem value="contractual">Contractual</MenuItem>
+                          <MenuItem value="outsourced">Outsourced</MenuItem>
+                          <MenuItem value="daily waged">Daily Waged</MenuItem>
+                        </TextField>
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Bank Account No"
-                          placeholder="Bank Account No"
-                          value={formData.bankDetails.accountNo}
-                          onChange={handleInputChange("bankDetails.accountNo")}
-                          required
+
+                      {/* <Grid item xs={12}>
+                        <FormControlLabel
+                          control={<Checkbox checked={formData.delcaration} onChange={handleInputChange("declaration")} />}
+                          label="Declaration"
                         />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="IFSC Code"
-                          placeholder="IFSC Code"
-                          value={formData.bankDetails.ifsc}
-                          onChange={handleInputChange("bankDetails.ifsc")}
-                          required
-                        />
-                      </Grid>
+                      </Grid> */}
                       <Grid item xs={12} sm={6}>
                         <TextField
                           fullWidth
@@ -419,6 +446,42 @@ function EmployeeAdd() {
                           required
                         />
                       </Grid>
+
+                      <Grid item xs={12}>
+                        <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                          Upload Signature
+                        </Typography>
+                        <input type="file" accept="image/*" onChange={handleFileInputChange("sign")} style={{ marginBottom: "10px" }} />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                          Upload Image
+                        </Typography>
+                        <input type="file" accept="image/*" onChange={handleFileInputChange("image")} style={{ marginBottom: "10px" }} />
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Yearly Member Fee Remitted"
+                        select
+                        value={formData.yearlyMemberFreeRemitted}
+                        onChange={handleInputChange("yearlyMemberFreeRemitted")}
+                        required
+                      >
+                        <MenuItem value="yes">Yes</MenuItem>
+                        <MenuItem value="no">No</MenuItem>
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControlLabel
+                        control={<Checkbox checked={formData.declaration} onChange={(e) => setFormData({ ...formData, declaration: e.target.checked })} />}
+                        label="Declaration"
+                      />
+                      <Typography>
+                        I hereby declare that i will follow the terms and conditions of the federation. i want to be a member of jharkhand state none-gazetted
+                        employees federation, godda.
+                      </Typography>
                     </Grid>
                   </CardContent>
                   <Divider sx={{ margin: 0 }} />
@@ -437,62 +500,11 @@ function EmployeeAdd() {
                     >
                       {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
                     </Button>
-
-                    {/* <Button
-                      size="large"
-                      type="submit"
-                      sx={{ mr: 2 }}
-                      variant="contained"
-                      disabled={loading}
-                    >
-                      {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
-                    </Button> */}
-
-                    {/* <Button type="submit" variant="contained">
-                      Submit
-                    </Button> */}
                   </CardActions>
                 </form>
               </Card>
-
-              {/* <MDBox pt={3}>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox> */}
             </Card>
           </Grid>
-          {/* <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  Projects Table
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns: pColumns, rows: pRows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid> */}
         </Grid>
       </MDBox>
       <Footer />

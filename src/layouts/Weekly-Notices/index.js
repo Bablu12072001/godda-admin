@@ -65,20 +65,14 @@ function WeeklyNotices() {
                 alignItems="center" // Align items vertically
               >
                 <MDTypography variant="h6" color="white">
-                    Weekly Notice List
+                  Weekly Notice List
                 </MDTypography>
                 <Button variant="contained" color="white" onClick={handleAddEmployee}>
-                    Weekly Notice Add
+                  Weekly Notice Add
                 </Button>
               </MDBox>
               <MDBox pt={3}>
-                <WeeklyNoticeList
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
+                <WeeklyNoticeList table={{ columns, rows }} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
               </MDBox>
             </Card>
           </Grid>

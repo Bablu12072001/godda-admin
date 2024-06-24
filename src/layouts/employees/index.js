@@ -30,20 +30,18 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/employees/data/employeesTableData";
+import EmployeeTablesList from "layouts/employees/data/employeeTableList";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import { useRouter } from "hooks";
 
 function EmployeeTables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
   const router = useRouter();
 
   const handleAddEmployee = () => {
     // router.push("/data/addEmployee");
     // router.push("/tables");
     // router.push("/data/employeeAdd");
-    router.push("/employeeAdd");
+    router.push("/memberAdd");
   };
 
   return (
@@ -67,21 +65,16 @@ function EmployeeTables() {
                 alignItems="center" // Align items vertically
               >
                 <MDTypography variant="h6" color="white">
-                  Employees Table
+                  Members Table
                 </MDTypography>
                 <Button variant="contained" color="white" onClick={handleAddEmployee}>
-                  Employee Add
+                  Members Add
                 </Button>
               </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
+              {/* <MDBox pt={3}>
+                <DataTable table={{ columns, rows }} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
+              </MDBox> */}
+              <EmployeeTablesList />
             </Card>
           </Grid>
           {/* <Grid item xs={12}>

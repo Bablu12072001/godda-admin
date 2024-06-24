@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { TextField, Button, Container, Typography, List, ListItem, ListItemText, CircularProgress, Box } from "@mui/material";
 import axios from "axios";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { accessToken } from "services/variables";
@@ -14,6 +14,7 @@ const NewsEventUploadForm = () => {
 
   const [base64Images, setBase64Images] = useState([]);
   const [images, setImages] = useState([]);
+  const [uploading, setUploading] = useState(false); // State for upload operation loading
 
   const handleInputChange = (e) => {
     setFormData({
@@ -48,6 +49,7 @@ const NewsEventUploadForm = () => {
   };
 
   const handleSubmit = async () => {
+    setUploading(true); // Set uploading state to true before upload
     console.log(base64Images);
     try {
       const response = await axios.post(
@@ -77,6 +79,8 @@ const NewsEventUploadForm = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit News and Event!");
+    } finally {
+      setUploading(false); // Set uploading state to false after upload (success or failure)
     }
   };
 
@@ -102,11 +106,28 @@ const NewsEventUploadForm = () => {
               </List>
             </div>
           )}
-          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!formData.title || !formData.content || base64Images.length === 0}>
-            Submit
-          </Button>
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={!formData.title || !formData.content || base64Images.length === 0 || uploading}
+            >
+              {uploading ? <CircularProgress size={24} /> : "Submit"}
+            </Button>
+          </Box>
         </form>
-        <ToastContainer />
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </Container>
     </DashboardLayout>
   );
