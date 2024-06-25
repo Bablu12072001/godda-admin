@@ -48,26 +48,9 @@ import Footer from "examples/Footer";
 import BackButton from "components/BackButton";
 
 function OfficeAdd() {
-  const [name, setName] = useState("");
-
+  const [districtOfficeName, setDistrictOfficeName] = useState("");
   const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
-
-  const [dateOfJoining, setDateOfJoining] = useState("");
-  const [officeName, setOfficeName] = useState("");
-  const [department, setDepartment] = useState("");
-  const [officeLevel, setOfficeLevel] = useState("");
-  const [subdivision, setSubdivision] = useState("");
-  const [block, setBlock] = useState("");
-  const [aadharLastSix, setAadharLastSix] = useState("");
-  const [employeeType, setEmployeeType] = useState("");
-  const [parentalUnion, setParentalUnion] = useState("");
-  const [address, setAddress] = useState("");
-  const [yearlyFeeRemitted, setYearlyFeeRemitted] = useState(false);
-  const [photo, setPhoto] = useState(null);
-  const [signature, setSignature] = useState(null);
-  const [declaration, setDeclaration] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e, setState) => {
@@ -75,104 +58,95 @@ function OfficeAdd() {
     setState(value);
   };
 
-  const handleCheckboxChange = (e, setState) => {
-    setState(e.target.checked);
-  };
-
-  const handleFileChange = (e, setState) => {
-    setState(e.target.files[0]);
-  };
-
   const validateForm = () => {
     const newErrors = {};
-    if (!name) newErrors.name = "Name is required";
-
+    if (!districtOfficeName) newErrors.districtOfficeName = "District Office Name is required";
     if (!email) newErrors.email = "Email is required";
-    if (!contact) newErrors.contact = "Contact is required";
 
-    if (!dateOfJoining) newErrors.dateOfJoining = "Date of Joining is required";
-    if (!officeName) newErrors.officeName = "Office Name is required";
-    if (!department) newErrors.department = "Department is required";
-    if (!officeLevel) newErrors.officeLevel = "Office Level is required";
-    if (officeLevel === "subdivision" && !subdivision) newErrors.subdivision = "Subdivision is required";
-    if (officeLevel === "block" && !block) newErrors.block = "Block is required";
-    if (!aadharLastSix) newErrors.aadharLastSix = "Aadhar last six digits are required";
-    if (!employeeType) newErrors.employeeType = "Employee Type is required";
-    if (!parentalUnion) newErrors.parentalUnion = "Parental Union  is required";
-    if (!address) newErrors.address = "Other Address is required";
-    if (!photo) newErrors.photo = "Photo is required";
-    if (!signature) newErrors.signature = "Signature is required";
-    if (!declaration) newErrors.declaration = "You must agree to the declaration";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleEnquiry = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (!validateForm()) return;
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-
-    formData.append("contact", contact);
-
-    formData.append("date_of_joining", dateOfJoining);
-    formData.append("office_name", officeName);
-    formData.append("department", department);
-    formData.append("office_level", officeLevel);
-    if (officeLevel === "subdivision") formData.append("subdivision", subdivision);
-    if (officeLevel === "block") formData.append("block", block);
-    formData.append("aadhar_last_six", aadharLastSix);
-    formData.append("employee_type", employeeType);
-    formData.append("parental_union", parentalUnion);
-    formData.append("address", address);
-    formData.append("yearly_fee_remitted", yearlyFeeRemitted);
-    formData.append("photo", photo);
-    formData.append("signature", signature);
+    const formData = {
+      districtOfficeName,
+      email,
+    };
 
     try {
+      setLoading(true);
       const response = await axios.post(`${apiUrl}/jmoa_enquiry`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          Authorization: accessToken(),
         },
       });
 
       console.log(response);
       if (response.data["body-json"].statusCode === 200) {
-        setName("");
+        toast.success("Form submitted successfully!");
+        setDistrictOfficeName("");
         setEmail("");
-
-        setContact("");
-
-        setDateOfJoining("");
-        setOfficeName("");
-        setDepartment("");
-        setOfficeLevel("");
-        setSubdivision("");
-        setBlock("");
-        setAadharLastSix("");
-        setEmployeeType("");
-        setParentalUnion("");
-        setAddress("");
-        setYearlyFeeRemitted(false);
-        setPhoto(null);
-        setSignature(null);
-        setDeclaration(false);
         setErrors({});
       }
     } catch (error) {
-      console.error("Error submitting enquiry:", error);
+      console.error("Error submitting form:", error);
+      toast.error("Failed to submit form. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
-        <MDTypography>Coming Soon.....</MDTypography>
-      </MDBox>
-      <Footer />
-      <ToastContainer />
-    </DashboardLayout>
+    <>
+      <DashboardLayout>
+        <DashboardNavbar />
+        <BackButton />
+
+        <MDBox pt={6} pb={3}>
+          <Grid container justifyContent="center">
+            <Grid item xs={12} md={8} lg={6}>
+              <Card>
+                <CardHeader title="Add District Office" />
+                <form onSubmit={handleSubmit}>
+                  <CardContent>
+                    <TextField
+                      fullWidth
+                      label="District Office Name"
+                      margin="normal"
+                      value={districtOfficeName}
+                      onChange={(e) => handleInputChange(e, setDistrictOfficeName)}
+                      error={!!errors.districtOfficeName}
+                      helperText={errors.districtOfficeName}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      margin="normal"
+                      type="email"
+                      value={email}
+                      onChange={(e) => handleInputChange(e, setEmail)}
+                      error={!!errors.email}
+                      helperText={errors.email}
+                    />
+                  </CardContent>
+                  <CardActions>
+                    <Button type="submit" color="primary" disabled={loading}>
+                      {loading ? <CircularProgress size={24} /> : "Submit"}
+                    </Button>
+                  </CardActions>
+                </form>
+              </Card>
+            </Grid>
+          </Grid>
+        </MDBox>
+
+        <ToastContainer />
+      </DashboardLayout>
+    </>
   );
 }
 

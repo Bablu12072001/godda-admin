@@ -1,180 +1,158 @@
-// import React, { useState } from "react";
-// import {
-//   TextField,
-//   Button,
-//   Container,
-//   Typography,
-//   Select,
-//   MenuItem,
-//   FormControl,
-//   InputLabel,
-//   Box,
-// } from "@mui/material";
-// import axios from "axios";
-// import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-// import { accessToken } from "services/variables";
-
-// const VideoUploadForm = () => {
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     youtube_url: "",
-//     type: "Select",
-//   });
-
-//   const handleChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-
-//   const handleSubmit = async () => {
-//     try {
-//       const response = await axios.post(
-//         "https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_videos",
-//         formData,
-//         {
-//           headers: {
-//             Authorization: accessToken(),
-//           },
-//         }
-//       );
-
-//       console.log("Response:", response.data);
-
-//       setFormData({
-//         title: "",
-//         youtube_url: "",
-//         type: "Select",
-//       });
-//     } catch (error) {
-//       console.error("Error submitting form:", error);
-//     }
-//   };
-
-//   return (
-//     <DashboardLayout>
-//       <Container maxWidth="sm">
-//         <Box
-//           display="flex"
-//           flexDirection="column"
-//           alignItems="center"
-//           justifyContent="center"
-//           height="100%"
-//         >
-//           <Typography variant="h4" align="center" gutterBottom>
-//             Video Upload Form
-//           </Typography>
-//           <form>
-//             <TextField
-//               label="Title"
-//               fullWidth
-//               margin="normal"
-//               name="title"
-//               value={formData.title}
-//               onChange={handleChange}
-//             />
-//             <TextField
-//               label="YouTube URL"
-//               fullWidth
-//               margin="normal"
-//               name="youtube_url"
-//               value={formData.youtube_url}
-//               onChange={handleChange}
-//             />
-//             <FormControl fullWidth margin="normal">
-//               <InputLabel>Type</InputLabel>
-//               <Select
-//                 name="type"
-//                 value={formData.type}
-//                 onChange={handleChange}
-//                 label="Type"
-//                 style={{ height: "3rem" }}
-//               >
-//                 <MenuItem value="gallery">Gallery</MenuItem>
-//                 <MenuItem value="Press">Press</MenuItem>
-//                 <MenuItem value="training">Training</MenuItem>
-//               </Select>
-//             </FormControl>
-//             <Button variant="contained" color="primary" onClick={handleSubmit}>
-//               Submit
-//             </Button>
-//           </form>
-//         </Box>
-//       </Container>
-//     </DashboardLayout>
-//   );
-// };
-
-// export default VideoUploadForm;
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Select, MenuItem, FormControl, InputLabel, Box, CircularProgress } from "@mui/material";
-import axios from "axios";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import { accessToken } from "services/variables";
-import { toast, ToastContainer } from "react-toastify";
+import { TextField, Button, Grid, Paper, Typography, CircularProgress, MenuItem } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { accessToken } from "services/variables";
 
-const AddForm = () => {
+const LeadershipForm = () => {
   const [formData, setFormData] = useState({
-    title: "",
-    youtube_url: "",
-    type: "Select",
+    name: "",
+    message: "",
+    district: "",
+    position: "",
+    team: "",
+    image: {
+      name: "",
+      base64: "",
+    },
   });
-  const [uploading, setUploading] = useState(false); // State for upload operation loading
+  const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
-  const handleSubmit = async () => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData({
+        ...formData,
+        image: {
+          name: file.name,
+          base64: reader.result.split(",")[1],
+        },
+      });
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      setUploading(true); // Set uploading state to true before upload
-      const response = await axios.post("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_leadership_filter_all_data", formData, {
+      const response = await axios.post("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_leadership", formData, {
         headers: {
           Authorization: accessToken(),
         },
       });
 
-      console.log("Response ledership:", response.data);
-
-      setFormData({
-        title: "",
-        youtube_url: "",
-        type: "Select",
-      });
-      toast.success("Video uploaded successfully!");
+      if (response.status === 200) {
+        toast.success("Form submitted successfully!");
+        setFormData({
+          name: "",
+          message: "",
+          district: "",
+          position: "",
+          team: "",
+          image: {
+            name: "",
+            base64: "",
+          },
+        });
+        setImagePreview("");
+      } else {
+        toast.error("Form submission failed.");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error uploading video. Please try again.");
+      toast.error("Form submission failed.");
     } finally {
-      setUploading(false); // Set uploading state to false after upload (success or failure)
+      setLoading(false);
     }
   };
 
   return (
     <DashboardLayout>
-      <Container maxWidth="sm">
-        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100%">
-          <Typography>Comming Soon.....</Typography>
-        </Box>
-        <ToastContainer
-          position="bottom-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </Container>
+      <DashboardNavbar />
+      <Button
+        variant="outlined"
+        onClick={() => navigate(-1)}
+        style={{ marginBottom: "20px", color: "red" }}
+        disabled={loading} // Disable button when loading
+      >
+        Back
+      </Button>
+      <Paper style={{ padding: 16, maxWidth: 600, margin: "auto" }}>
+        <ToastContainer />
+        <Typography sx={{ justifyContent: "center", display: "flex", alignItems: "center" }} variant="h6" gutterBottom>
+          Leadership Form
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField required id="name" name="name" label="Name" fullWidth value={formData.name} onChange={handleChange} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField required id="message" name="message" label="Message" fullWidth multiline rows={4} value={formData.message} onChange={handleChange} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField required id="position" name="position" label="Position" fullWidth value={formData.position} onChange={handleChange} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField required id="district" name="district" label="district" fullWidth value={formData.district} onChange={handleChange} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField select required id="team" name="team" label="Team" fullWidth value={formData.team} onChange={handleChange}>
+                <MenuItem value="state leadership team">State Leadership Team</MenuItem>
+                <MenuItem value="district leadership team">District Leadership Team</MenuItem>
+                <MenuItem value="block leadership team">Block Leadership Team</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <input accept="image/*" style={{ display: "none" }} id="raised-button-file" type="file" onChange={handleImageChange} />
+              <label htmlFor="raised-button-file">
+                <Typography>Upload Image</Typography>
+                <Button variant="contained" color="primary" component="span">
+                  Upload Image
+                </Button>
+              </label>
+            </Grid>
+            {imagePreview && (
+              <Grid item xs={12}>
+                <img src={imagePreview} alt="Selected" style={{ maxWidth: "200px" }} />
+              </Grid>
+            )}
+            <Grid item xs={12} container spacing={2}>
+              <Grid item xs={6}>
+                <Button
+                  type="submit"
+                  style={{
+                    boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, 0.3)", // Adding shadow to the button
+                    backgroundColor: "#3f51b5", // Optional: Change the background color to match the default MUI primary color
+                    color: "white", // Optional: Ensure text color is readable
+                  }}
+                >
+                  {loading ? <CircularProgress size={24} /> : "Submit"}
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </form>
+      </Paper>
     </DashboardLayout>
   );
 };
 
-export default AddForm;
+export default LeadershipForm;

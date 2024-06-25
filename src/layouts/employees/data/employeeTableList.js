@@ -61,7 +61,7 @@ const leadrshipTableList = () => {
   const [editData, setEditData] = useState({
     name: "",
     email_id: "",
-
+    employeeId: "",
     officeLevel: "",
     officeName: "",
     subDivision: "",
@@ -103,6 +103,7 @@ const leadrshipTableList = () => {
     setEditData({
       name: selectedItem.name,
       email_id: selectedItem.email_id,
+      employeeId: selectedItem.employeeId,
 
       officeLevel: selectedItem.officeLevel,
       officeName: selectedItem.officeName,
@@ -387,6 +388,9 @@ const leadrshipTableList = () => {
                     <Typography variant="body2">
                       <b>Yearly Member Fee Remitted:</b> {selectedItem.yearlyMemberFreeRemitted}
                     </Typography>
+                    {/* <Typography variant="body2">
+                      <b>Password:</b> {selectedItem.password}
+                    </Typography> */}
                     {/* <Typography variant="body2">
                     <b>About:</b> {selectedItem.aboutUs}
                   </Typography> */}

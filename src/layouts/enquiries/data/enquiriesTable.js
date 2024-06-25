@@ -20,7 +20,7 @@ const EnquiriesTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [contactData, setContactData] = useState([]);
-const [pageReload,setPageRelaod]=useState(false);
+  const [pageReload, setPageRelaod] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,7 +72,7 @@ const [pageReload,setPageRelaod]=useState(false);
 
         // Remove the deleted record from the state
         // setContactData((prevData) => prevData.filter((contact) => contact.enqid !== enqid));
-       setPageRelaod(!pageReload);
+        setPageRelaod(!pageReload);
         Swal.fire("Deleted!", "The record has been deleted.", "success");
       } catch (error) {
         console.error("Error deleting enquiry:", error);
@@ -88,10 +88,9 @@ const [pageReload,setPageRelaod]=useState(false);
           <MDBox component="thead">
             <TableRow>
               <TableCell>S.N</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Contact</TableCell>
               <TableCell>Date</TableCell>
+              <TableCell>District Office Name</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </MDBox>
@@ -99,10 +98,9 @@ const [pageReload,setPageRelaod]=useState(false);
             {contactData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact, index) => (
               <TableRow key={contact.enqid}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{contact.name}</TableCell>
+                <TableCell>{contact.date}</TableCell>
+                <TableCell>{contact.district_office_name}</TableCell>
                 <TableCell>{contact.email}</TableCell>
-                <TableCell>{contact.contact}</TableCell>
-                <TableCell>{contact.Date}</TableCell>
                 <TableCell>
                   <Button variant="contained" color="info" onClick={() => handleDelete(contact.enqid)}>
                     Delete

@@ -99,7 +99,7 @@ function DefaultNavbar({ transparent, light, action }) {
       >
         <MDBox component={Link} to="/" py={transparent ? 1.5 : 0.75} lineHeight={1} pl={{ xs: 0, lg: 1 }}>
           <MDTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
-            JSNGEF
+            JSNGEF-G
           </MDTypography>
         </MDBox>
         <MDBox color="inherit" display={{ xs: "none", lg: "flex" }} m={0} p={0}>
@@ -140,7 +140,7 @@ function DefaultNavbar({ transparent, light, action }) {
                 size="small"
                 sx={{ mt: -0.3 }}
               >
-                JSNGEF
+                JSNGEF-G
               </MDButton>
             </MDBox>
           ))}
