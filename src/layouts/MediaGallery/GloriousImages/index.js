@@ -17,11 +17,12 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { accessToken } from "services/variables";
 import { useNavigate } from "react-router-dom";
+import Auth from "Auth";
 
 const Gallery = () => {
   const navigate = useNavigate();
+  const { token } = Auth();
   const [galleryData, setGalleryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
@@ -34,18 +35,16 @@ const Gallery = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Set loading state to true before API call
+      setLoading(true);
       try {
         const response = await axios.get("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_glorious_moments_images_all_data");
-
         setGalleryData(response.data["body-json"]["body"]);
       } catch (error) {
         console.error("Error fetching gallery data:", error);
       } finally {
-        setLoading(false); // Set loading state to false after API call
+        setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -57,33 +56,27 @@ const Gallery = () => {
     setCurrentPage(value);
   };
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, itemId) => {
     setAnchorEl(event.currentTarget);
+    setSelectedItemId(itemId);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleDeleteClick = (itemId) => {
+  const handleDeleteClick = () => {
     setDeleteDialogOpen(true);
-    setSelectedItemId(itemId);
     handleMenuClose();
   };
 
   const handleDeleteConfirm = async () => {
-    console.log("Deleting item with ID:", selectedItemId);
     setDeleteLoading(true);
     try {
-      const response = await axios.delete(`https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_delete`, {
-        headers: {
-          Authorization: `Bearer ${accessToken()}`,
-        },
-        data: {
-          id: selectedItemId, // Sending ID in the body of the request
-        },
+      await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_image_delete", {
+        data: { id: selectedItemId },
+        headers: { Authorization: token },
       });
-      console.log("Delete response:", response.data);
       setGalleryData((prevData) => prevData.filter((item) => item.id !== selectedItemId));
       setDeleteDialogOpen(false);
     } catch (error) {
@@ -106,20 +99,11 @@ const Gallery = () => {
 
   return (
     <Container>
-      <Button
-        variant="outlined"
-        onClick={handleImageUpload}
-        style={{ marginBottom: "20px", color: "red" }}
-        disabled={addImageLoading} // Disable button while uploading image
-      >
-        {addImageLoading ? (
-          <CircularProgress size={20} /> // Show circular progress if uploading image
-        ) : (
-          "Add Image"
-        )}
+      <Button variant="outlined" onClick={handleImageUpload} style={{ marginBottom: "20px", color: "red" }} disabled={addImageLoading}>
+        {addImageLoading ? <CircularProgress size={20} /> : "Add Image"}
       </Button>
       {loading ? (
-        <CircularProgress /> // Show loading indicator if data is being fetched
+        <CircularProgress />
       ) : (
         <Grid container spacing={2}>
           {currentItems.map((item) => (
@@ -129,9 +113,7 @@ const Gallery = () => {
                   overflow: "hidden",
                   transition: "transform 0.2s",
                   position: "relative",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
+                  "&:hover": { transform: "scale(1.05)" },
                 }}
               >
                 <CardMedia
@@ -143,11 +125,8 @@ const Gallery = () => {
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/300?text=Image+Not+Available";
-                  }} // Fallback to a placeholder image on error
+                  }}
                 />
-
-                {console.log("Glorious images ", item.imageUrl)}
-
                 <IconButton
                   aria-label="more"
                   aria-controls="menu"
@@ -164,13 +143,9 @@ const Gallery = () => {
                   onClose={handleMenuClose}
                   anchorOrigin={{ vertical: "top", horizontal: "right" }}
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  PaperProps={{
-                    sx: {
-                      width: 150,
-                    },
-                  }}
+                  PaperProps={{ sx: { width: 150 } }}
                 >
-                  <MenuItem onClick={() => handleDeleteClick(item.id)}>
+                  <MenuItem onClick={handleDeleteClick}>
                     <IconButton aria-label="delete" color="inherit">
                       <DeleteIcon />
                     </IconButton>
@@ -189,7 +164,6 @@ const Gallery = () => {
         color="primary"
         style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
       />
-
       <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
         <DialogTitle>Are you sure you want to delete this item?</DialogTitle>
         <DialogActions>
@@ -197,11 +171,7 @@ const Gallery = () => {
             Cancel
           </Button>
           <Button onClick={handleDeleteConfirm} color="primary" disabled={deleteLoading}>
-            {deleteLoading ? (
-              <CircularProgress size={20} /> // Show circular progress if deleting
-            ) : (
-              "Delete"
-            )}
+            {deleteLoading ? <CircularProgress size={20} /> : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

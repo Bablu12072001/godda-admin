@@ -69,7 +69,7 @@ const Gallery = () => {
 
   const handleDeleteClick = (itemId) => {
     setDeleteDialogOpen(true);
-    setSelectedItemId(itemId);
+
     handleMenuClose();
   };
 

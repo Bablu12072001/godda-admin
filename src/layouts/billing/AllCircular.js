@@ -27,7 +27,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "Constants";
 import swal from "sweetalert";
-import Auth from "Auth";
+import Auth from "Auth"; // assuming Auth is exported from Auth.js
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function Circular() {
@@ -49,7 +49,6 @@ export default function Circular() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
 
   const skeletonArray = Array.from({ length: 5 }, (_, index) => (
     <>
@@ -63,58 +62,45 @@ export default function Circular() {
       setLoading(true);
       const res = await axios.post(`${apiUrl}/jmoa_leadership_filter_all_data`, { team: teamType }, config);
       if (res.data["body-json"]["statusCode"] !== 200 || res.data["body-json"]["statusCode"] === undefined) {
-        swal({
-          title: "Error!",
-          text: "Error fetching data!!",
-          icon: "error",
-          button: "Ok!",
-        });
+        throw new Error("Error fetching data");
       }
-      if (res.data["body-json"]["body"] === undefined || res.data["body-json"]["body"].length === 0) {
+      if (!res.data["body-json"]["body"] || res.data["body-json"]["body"].length === 0) {
         setData([]);
       } else {
         setData(res.data["body-json"]["body"]);
       }
     } catch (error) {
-      swal({
-        title: "Error!",
-        text: "Error fetching data!! " + error,
-        icon: "error",
-        button: "Aww No!",
-      });
-      console.error("Error:", error);
+      handleError("Error fetching data", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id, text) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes!",
-    });
-    if (result.isConfirmed) {
-      const url = "jmoa_leadership_delete";
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!",
+      });
+      if (result.isConfirmed) {
+        const url = "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_leadership_delete";
+        if (!id) {
+          throw new Error("ID is required");
+        }
         setLoading(true);
-        const res = await axios.delete(`${apiUrl}/${url}`, {
+        const res = await axios.delete(url, {
           data: { id: id },
           headers: {
             Authorization: token,
           },
         });
         if (res.data["body-json"]["statusCode"] !== 200 || res.data["body-json"]["statusCode"] === undefined) {
-          swal({
-            title: "Error!",
-            text: "Error deleting data!!",
-            icon: "error",
-            button: "Ok!",
-          });
+          throw new Error("Error deleting data");
         } else {
           swal({
             title: "Success!",
@@ -124,17 +110,11 @@ export default function Circular() {
           });
           fetchFilteredData(text);
         }
-      } catch (error) {
-        swal({
-          title: "Error!",
-          text: "Error deleting data!! " + error,
-          icon: "error",
-          button: "Ok!",
-        });
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      handleError("Error deleting data", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,43 +127,25 @@ export default function Circular() {
     setMenuAnchor(null);
   };
 
-  // const handleEdit = (item) => {
-  //   setSelectedItem(item);
-  //   setDialogOpen(true);
-  //   setMenuAnchor(null);
-  // };
   const handleEdit = (item) => {
-    setSelectedItem(item); // Set the selected item when editing
-    setImageFile(null); // Reset image file state when opening dialog
+    setSelectedItem(item);
     setDialogOpen(true);
     setMenuAnchor(null);
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
-    setSelectedItem(null); // Reset selected item when closing dialog
+    setSelectedItem(null);
   };
 
   const handleSave = async () => {
-    const url = "jmoa_leadership_update"; // Assuming you have an update endpoint
     try {
+      const url = "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/edit_leadership";
       setLoading(true);
-      let imageUrl = selectedItem.imageUrl;
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        const uploadRes = await axios.post(`${apiUrl}/upload_image`, formData, config);
-        imageUrl = uploadRes.data.url;
-      }
-      const updatedItem = { ...selectedItem, imageUrl };
-      const res = await axios.put(`${apiUrl}/${url}`, updatedItem, config);
+      const updatedItem = { ...selectedItem };
+      const res = await axios.put(url, updatedItem, config);
       if (res.data["body-json"]["statusCode"] !== 200 || res.data["body-json"]["statusCode"] === undefined) {
-        swal({
-          title: "Error!",
-          text: "Error updating data!!",
-          icon: "error",
-          button: "Ok!",
-        });
+        throw new Error("Error updating data");
       } else {
         swal({
           title: "Success!",
@@ -195,17 +157,12 @@ export default function Circular() {
         handleDialogClose();
       }
     } catch (error) {
-      swal({
-        title: "Error!",
-        text: "Error updating data!! " + error,
-        icon: "error",
-        button: "Ok!",
-      });
-      console.error("Error:", error);
+      handleError("Error updating data", error);
     } finally {
       setLoading(false);
     }
   };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -215,8 +172,14 @@ export default function Circular() {
     setPage(0);
   };
 
-  const handleImageUpload = (e) => {
-    setImageFile(e.target.files[0]);
+  const handleError = (title, error) => {
+    swal({
+      title: title,
+      text: "Error: " + error.message,
+      icon: "error",
+      button: "Ok!",
+    });
+    console.error("Error:", error);
   };
 
   useEffect(() => {
@@ -309,7 +272,7 @@ export default function Circular() {
                               <IconButton onClick={(event) => handleMenuOpen(event, item)}>
                                 <MoreVertIcon />
                               </IconButton>
-                              <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
+                              <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor) && selectedItem?.id === item.id} onClose={handleMenuClose}>
                                 <MenuItem onClick={() => handleEdit(item)}>Edit</MenuItem>
                                 <MenuItem onClick={() => handleDelete(item.id, text)}>Delete</MenuItem>
                               </Menu>
@@ -369,8 +332,6 @@ export default function Circular() {
             value={selectedItem?.position || ""}
             onChange={(e) => setSelectedItem({ ...selectedItem, position: e.target.value })}
           />
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
-          {selectedItem?.imageUrl && <img src={selectedItem.imageUrl} alt={selectedItem?.name} style={{ width: "250px", marginTop: "10px" }} />}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">

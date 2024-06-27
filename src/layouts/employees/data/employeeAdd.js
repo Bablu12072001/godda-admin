@@ -30,6 +30,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Checkbox,
+  Box,
 } from "@mui/material";
 
 // Material Dashboard 2 React components
@@ -46,6 +47,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import BackButton from "components/BackButton";
+import scanner from "../../../assets/images/scanner1.png";
 
 function EmployeeAdd() {
   const [loading, setLoading] = useState(false);
@@ -469,6 +471,58 @@ function EmployeeAdd() {
                         </Typography>
                         <input type="file" accept="image/*" onChange={handleFileInputChange("image")} style={{ marginBottom: "10px" }} />
                       </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="h6" style={{ marginBottom: "10px", textAlign: "center" }}>
+                        Account Details and Scanner
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: { xs: "column", md: "row" }, // Stack on mobile, row on larger screens
+                          alignItems: "center", // Center items horizontally
+                          border: "1px solid #ccc",
+                          padding: "10px",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            flex: "1 1 auto",
+                            paddingRight: { xs: "0", md: "10px" },
+                            marginBottom: { xs: "0", md: "0" }, // Reduced marginBottom
+                            textAlign: "left", // Left align text content
+                          }}
+                        >
+                          <Typography variant="body1">
+                            <strong>Bank Name:</strong> Indian Bank
+                          </Typography>
+                          <Typography variant="body1">
+                            <strong>Branch:</strong> GODDA
+                          </Typography>
+                          <Typography variant="body1">
+                            <strong>IFS Code:</strong> IDIB000G576
+                          </Typography>
+                          <Typography variant="body1">
+                            <strong>Account Name:</strong> JSNGEF GODDA
+                          </Typography>
+                          <Typography variant="body1">
+                            <strong>Account No:</strong> 7516125458
+                          </Typography>
+                        </Box>
+                        <img
+                          src={scanner} // Assuming 'scanner' is imported or defined elsewhere
+                          alt="no scanner"
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            marginLeft: { xs: "0", md: "10px" }, // Added left margin for spacing
+                          }}
+                        />
+                      </Box>
+                      <Typography variant="body2" style={{ marginTop: "10px", textAlign: "center" }}>
+                        <strong>Note:</strong> If you want to become a member, pay only 150 rupees for the membership.
+                      </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField

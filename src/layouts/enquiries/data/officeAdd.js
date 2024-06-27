@@ -48,8 +48,9 @@ import Footer from "examples/Footer";
 import BackButton from "components/BackButton";
 
 function OfficeAdd() {
-  const [districtOfficeName, setDistrictOfficeName] = useState("");
+  const [officeName, setOfficeName] = useState("");
   const [email, setEmail] = useState("");
+  const [block, setBlock] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -60,8 +61,9 @@ function OfficeAdd() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!districtOfficeName) newErrors.districtOfficeName = "District Office Name is required";
+    if (!officeName) newErrors.officeName = "District Office Name is required";
     if (!email) newErrors.email = "Email is required";
+    if (!block) newErrors.block = "Block is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,13 +75,14 @@ function OfficeAdd() {
     if (!validateForm()) return;
 
     const formData = {
-      districtOfficeName,
+      officeName,
       email,
+      block,
     };
 
     try {
       setLoading(true);
-      const response = await axios.post(`${apiUrl}/jmoa_enquiry`, formData, {
+      const response = await axios.post(`${apiUrl}/add_office`, formData, {
         headers: {
           Authorization: accessToken(),
         },
@@ -88,8 +91,9 @@ function OfficeAdd() {
       console.log(response);
       if (response.data["body-json"].statusCode === 200) {
         toast.success("Form submitted successfully!");
-        setDistrictOfficeName("");
+        setOfficeName("");
         setEmail("");
+        setBlock("");
         setErrors({});
       }
     } catch (error) {
@@ -117,10 +121,10 @@ function OfficeAdd() {
                       fullWidth
                       label="District Office Name"
                       margin="normal"
-                      value={districtOfficeName}
-                      onChange={(e) => handleInputChange(e, setDistrictOfficeName)}
-                      error={!!errors.districtOfficeName}
-                      helperText={errors.districtOfficeName}
+                      value={officeName}
+                      onChange={(e) => handleInputChange(e, setOfficeName)}
+                      error={!!errors.setOfficeName}
+                      helperText={errors.setOfficeName}
                     />
                     <TextField
                       fullWidth
@@ -131,6 +135,15 @@ function OfficeAdd() {
                       onChange={(e) => handleInputChange(e, setEmail)}
                       error={!!errors.email}
                       helperText={errors.email}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Block"
+                      margin="normal"
+                      value={block}
+                      onChange={(e) => handleInputChange(e, setBlock)}
+                      error={!!errors.block}
+                      helperText={errors.block}
                     />
                   </CardContent>
                   <CardActions>

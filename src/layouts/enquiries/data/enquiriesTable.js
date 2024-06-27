@@ -21,10 +21,11 @@ const EnquiriesTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [contactData, setContactData] = useState([]);
   const [pageReload, setPageRelaod] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_enquiry_all_data", {
+        const response = await axios.get("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/get_all_office", {
           headers: {
             Authorization: accessToken(),
           },
@@ -47,7 +48,7 @@ const EnquiriesTable = () => {
     setPage(0);
   };
 
-  const handleDelete = async (enqid) => {
+  const handleDelete = async (officeName) => {
     // Show SweetAlert confirmation
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -62,16 +63,15 @@ const EnquiriesTable = () => {
     if (result.isConfirmed) {
       try {
         // Delete record using delete API
-        const temp = await axios.delete(`https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_enquiry_delete`, {
+        const temp = await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/delete_office", {
           headers: {
             Authorization: accessToken(),
           },
-          data: { id: enqid },
+          data: { officeName },
         });
         console.log("Delete", temp);
 
-        // Remove the deleted record from the state
-        // setContactData((prevData) => prevData.filter((contact) => contact.enqid !== enqid));
+        // Trigger reload to update the table
         setPageRelaod(!pageReload);
         Swal.fire("Deleted!", "The record has been deleted.", "success");
       } catch (error) {
@@ -88,21 +88,21 @@ const EnquiriesTable = () => {
           <MDBox component="thead">
             <TableRow>
               <TableCell>S.N</TableCell>
-              <TableCell>Date</TableCell>
               <TableCell>District Office Name</TableCell>
+              <TableCell>Block</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </MDBox>
           <TableBody>
             {contactData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact, index) => (
-              <TableRow key={contact.enqid}>
+              <TableRow key={contact.officeName}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{contact.date}</TableCell>
-                <TableCell>{contact.district_office_name}</TableCell>
+                <TableCell>{contact.officeName}</TableCell>
+                <TableCell>{contact.block}</TableCell>
                 <TableCell>{contact.email}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="info" onClick={() => handleDelete(contact.enqid)}>
+                  <Button variant="contained" color="info" onClick={() => handleDelete(contact.officeName)}>
                     Delete
                   </Button>
                 </TableCell>
