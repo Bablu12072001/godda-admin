@@ -38,26 +38,6 @@ const PresidentData = () => {
         setLoading(false);
       });
   };
-  //   useEffect(() => {
-  //     // Fetch President Data on component mount
-  //     axios
-  //       .get(
-  //         "https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_president_message_all_data",
-  //         {
-  //           headers: {
-  //             Authorization: accessToken(),
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         setPresidentData(response.data["body-json"].body);
-  //         setLoading(false);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching president data:", error);
-  //         setLoading(false);
-  //       });
-  //   }, []);
 
   const handleUpdate = () => {
     setOpenDialog(false);
@@ -75,15 +55,6 @@ const PresidentData = () => {
         // If confirmed, set updating state to true
         setUpdating(true);
 
-        // If confirmed, make the PUT request to update president data
-        // const updateData = {
-        //   name: editedName || presidentData.name,
-        //   message: editedMessage || presidentData.message,
-        //   imageUrl: editedImage || presidentData.imageUrl,
-        //   base64: "Updated base64...",
-        // };
-
-        // If confirmed, make the PUT request to update president data
         const updateData = {
           name: editedName || presidentData.name,
           message: editedMessage || presidentData.message,

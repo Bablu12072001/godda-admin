@@ -76,6 +76,7 @@ const leadrshipTableList = () => {
     contactNumber: "",
     district: "",
     employeeType: "",
+    transactionNo: "",
 
     declaration: true,
     sign: {
@@ -119,6 +120,7 @@ const leadrshipTableList = () => {
       contactNumber: selectedItem.contactNumber,
       district: selectedItem.district,
       employeeType: selectedItem.employeeType,
+      transactionNo: selectedItem.transactionNo,
 
       declaration: true,
       sign: {
@@ -387,6 +389,9 @@ const leadrshipTableList = () => {
                     </Typography>
                     <Typography variant="body2">
                       <b>Yearly Member Fee Remitted:</b> {selectedItem.yearlyMemberFreeRemitted}
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>Transaction/Ref no:</b> {selectedItem.transactionNo}
                     </Typography>
                     {/* <Typography variant="body2">
                       <b>Password:</b> {selectedItem.password}

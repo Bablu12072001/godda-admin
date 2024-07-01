@@ -81,6 +81,7 @@ function EmployeeAdd() {
     yearlyMemberFreeRemitted: "",
     district: "",
     employeeType: "",
+    transactionNo: "",
 
     declaration: false,
     sign: {
@@ -168,6 +169,7 @@ function EmployeeAdd() {
           yearlyMemberFreeRemitted: "",
           district: "",
           employeeType: "",
+          transactionNo: "",
           declaration: false,
           sign: {
             name: "",
@@ -190,6 +192,7 @@ function EmployeeAdd() {
       setLoading(false);
     }
   };
+  const isSubmitDisabled = !formData.transactionNo;
 
   // const handleOfficeLevelChange = (event) => {
   //   const selectedOfficeLevel = event.target.value;
@@ -332,7 +335,15 @@ function EmployeeAdd() {
                           value={formData.contactNumber}
                           onChange={handleInputChange("contactNumber")}
                           required
+                          inputProps={{
+                            pattern: "[6-9]{1}[0-9]{9}",
+                            title: "Contact number should start with a digit from 6 to 9 and have 10 digits in total",
+                            maxLength: 10,
+                          }}
                         />
+                        <Typography variant="body2" color="textSecondary">
+                          Format: 6-9XXXXXXXXX (e.g., 9876543210)
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextField
@@ -419,7 +430,15 @@ function EmployeeAdd() {
                           value={formData.lastSixDigitOfAadhar}
                           onChange={handleInputChange("lastSixDigitOfAadhar")}
                           required
+                          inputProps={{
+                            pattern: "[0-9]{6}",
+                            title: "Aadhar number should be exactly Last 6 digits",
+                            maxLength: 6,
+                          }}
                         />
+                        <Typography variant="body2" color="textSecondary">
+                          Format: XXXXXX (e.g., 123456)
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextField
@@ -460,16 +479,16 @@ function EmployeeAdd() {
                       </Grid>
 
                       <Grid item xs={12}>
+                        <Grid item xs={12}>
+                          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                            Upload Profile Image
+                          </Typography>
+                          <input type="file" accept="image/*" onChange={handleFileInputChange("image")} style={{ marginBottom: "10px" }} />
+                        </Grid>
                         <Typography variant="h6" sx={{ marginBottom: 1 }}>
                           Upload Signature
                         </Typography>
                         <input type="file" accept="image/*" onChange={handleFileInputChange("sign")} style={{ marginBottom: "10px" }} />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="h6" sx={{ marginBottom: 1 }}>
-                          Upload Image
-                        </Typography>
-                        <input type="file" accept="image/*" onChange={handleFileInputChange("image")} style={{ marginBottom: "10px" }} />
                       </Grid>
                     </Grid>
                     <Grid item xs={12}>
@@ -537,6 +556,16 @@ function EmployeeAdd() {
                         <MenuItem value="no">No</MenuItem>
                       </TextField>
                     </Grid>
+                    <Grid item xs={12} sm={6} mt={4}>
+                      <TextField
+                        fullWidth
+                        label="Transaction/Ref no"
+                        placeholder="Transaction/Ref no"
+                        value={formData.transactionNo}
+                        onChange={handleInputChange("transactionNo")}
+                        required
+                      />
+                    </Grid>
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={<Checkbox checked={formData.declaration} onChange={(e) => setFormData({ ...formData, declaration: e.target.checked })} />}
@@ -549,20 +578,22 @@ function EmployeeAdd() {
                     </Grid>
                   </CardContent>
                   <Divider sx={{ margin: 0 }} />
-                  <CardActions>
+                  <CardActions sx={{ justifyContent: "center" }}>
                     <Button
-                      size="large"
+                      size="small"
                       type="submit"
                       sx={{
                         mt: 2,
-                        width: "100%",
+                        width: 80,
+                        height: 40,
                         color: "white",
+                        minWidth: "auto",
                       }}
                       variant="contained"
-                      disabled={loading}
-                      style={{ color: "white" }}
+                      disabled={loading || isSubmitDisabled}
+                      style={{ color: "white", minWidth: "auto" }}
                     >
-                      {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+                      {loading ? <CircularProgress size={20} color="inherit" /> : "Submit"}
                     </Button>
                   </CardActions>
                 </form>

@@ -166,9 +166,10 @@ const AllMember = () => {
               <TableCell>Email</TableCell>
               <TableCell>District</TableCell>
               <TableCell>Joining Date</TableCell>
-              <TableCell>Employee Type</TableCell>
-              {/* <TableCell>Last Six Digit Aadhar</TableCell> */}
-              <TableCell>Yearly Member Fee Remitted?</TableCell>
+              {/* <TableCell>Employee Type</TableCell> */}
+
+              <TableCell>Fee Paid This Year?</TableCell>
+              <TableCell>Transaction/Ref no </TableCell>
               <TableCell>Verification Status</TableCell>
             </TableRow>
           </TableHead>
@@ -182,10 +183,11 @@ const AllMember = () => {
 
                   <TableCell>{item.district}</TableCell>
                   <TableCell>{item.joiningDate}</TableCell>
-                  <TableCell>{item.employeeType}</TableCell>
+                  {/* <TableCell>{item.employeeType}</TableCell> */}
 
-                  {/* <TableCell>{item.lastSixDigitOfAadhar}</TableCell> */}
                   <TableCell>{item.yearlyMemberFreeRemitted}</TableCell>
+
+                  <TableCell>{item.transactionNo}</TableCell>
                   <TableCell>
                     {item.isVerified ? (
                       <Button variant="contained" color="success" onClick={() => handleVerify(item.email_id)}>

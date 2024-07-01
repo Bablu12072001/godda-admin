@@ -1,5 +1,3 @@
-// NewsEventTable.js
-
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -51,15 +49,11 @@ const NewBlogTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  //edit function
-
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editAuthor, setEditAuthor] = useState("");
   const [editContent, setEditContent] = useState("");
-  const [editid, setEditid] = useState("");
-
-  //edit function
+  const [editId, setEditId] = useState("");
 
   const handleClick = (event, item) => {
     setAnchorEl(event.currentTarget);
@@ -67,7 +61,7 @@ const NewBlogTable = () => {
   };
 
   const handleEdit = () => {
-    setEditid(selectedItem.id);
+    setEditId(selectedItem.id);
     setEditTitle(selectedItem.title);
     setEditAuthor(selectedItem.author);
     setEditContent(selectedItem.content);
@@ -76,13 +70,12 @@ const NewBlogTable = () => {
   };
 
   const handleEditSave = async () => {
-    console.log(editid);
     try {
       setLoading(true);
       const response = await axios.put(
-        "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/_blog_edit",
+        "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_blog_edit",
         {
-          id: editid,
+          id: editId,
           title: editTitle,
           author: editAuthor,
           content: editContent,
@@ -95,12 +88,9 @@ const NewBlogTable = () => {
         }
       );
 
-      console.log(response.data);
-
       if (response.data["body-json"].statusCode === 200) {
-        // Update the data in the state
         setNewsData((prevData) =>
-          prevData.map((data) => (data.id === editid ? { ...data, title: editTitle, author: editAuthor, content: editContent } : data))
+          prevData.map((data) => (data.id === editId ? { ...data, title: editTitle, author: editAuthor, content: editContent } : data))
         );
         console.log("Blog edited successfully!");
         setEditDialogOpen(false);
@@ -111,7 +101,7 @@ const NewBlogTable = () => {
       console.error("Error editing blog:", error);
       console.log("Failed to edit blog.");
     } finally {
-      setLoading(false); // Set loading state to false after API call
+      setLoading(false);
     }
   };
 
@@ -128,20 +118,10 @@ const NewBlogTable = () => {
     setPage(0);
   };
 
-  // const handleClick = (event, item) => {
-  //   setAnchorEl(event.currentTarget);
-  //   setSelectedItem(item);
-  // };
-
   const handleClose = () => {
     setAnchorEl(null);
     setSelectedItem(null);
   };
-
-  // const handleEdit = () => {
-  //   console.log(selectedItem);
-  //   handleClose();
-  // };
 
   const handleDelete = (id) => {
     setSelectedItemDeletedata(id);
@@ -154,8 +134,6 @@ const NewBlogTable = () => {
     setOpenConfirmation(false);
   };
 
-  // delete api
-
   const handleDeleteConfirmed = async () => {
     setOpenConfirmation(false);
     try {
@@ -167,11 +145,7 @@ const NewBlogTable = () => {
         },
       });
 
-      console.log(response.data);
-
-      // Check if the delete operation was successful
       if (response.data["body-json"].statusCode === 200) {
-        // Update the state to reflect the deletion
         setNewsData((prevData) => prevData.filter((data) => data.id !== selectedItemDeletedata));
         console.log("Blog deleted successfully!");
       } else {
@@ -181,7 +155,7 @@ const NewBlogTable = () => {
       console.error("Error deleting blog:", error);
       console.log("Failed to delete blog.");
     } finally {
-      setLoading(false); // Set loading state to false after API call
+      setLoading(false);
     }
   };
 
@@ -208,7 +182,7 @@ const NewBlogTable = () => {
       } catch (error) {
         console.error("Error fetching news event data:", error);
       } finally {
-        setLoading(false); // Set loading state to false after API call
+        setLoading(false);
       }
     };
 
@@ -232,7 +206,7 @@ const NewBlogTable = () => {
           navigate("/new-blog");
         }}
         style={{ marginBottom: "20px", color: "red" }}
-        disabled={loading} // Disable button when loading
+        disabled={loading}
       >
         Add Blog
       </Button>
@@ -252,33 +226,30 @@ const NewBlogTable = () => {
           </TableHead>
           <TableBody>
             {newsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
-              <React.Fragment key={item.id}>
-                <TableRow>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell>{item.time}</TableCell>
-                  <TableCell>{item.imageUrl.length > 0 && <Avatar alt="Image" src={item.imageUrl[0]} />}</TableCell>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.author}</TableCell>
-                  <TableCell>{item.content}</TableCell>
-
-                  <TableCell>
-                    <IconButton color="inherit" onClick={(e) => handleClick(e, item)}>
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && selectedItem?.id === item.id} onClose={handleClose} elevation={1}>
-                      <MenuItem onClick={handleEdit}>
-                        <EditIcon /> Edit
-                      </MenuItem>
-                      <MenuItem onClick={() => handleDelete(item.id)}>
-                        <DeleteIcon /> Delete
-                      </MenuItem>
-                      <MenuItem onClick={() => handleView(item)}>
-                        <VisibilityIcon /> View
-                      </MenuItem>
-                    </Menu>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
+              <TableRow key={item.id}>
+                <TableCell>{item.date}</TableCell>
+                <TableCell>{item.time}</TableCell>
+                <TableCell>{item.imageUrl.length > 0 && <Avatar alt="Image" src={item.imageUrl[0]} />}</TableCell>
+                <TableCell>{item.title}</TableCell>
+                <TableCell>{item.author}</TableCell>
+                <TableCell>{truncateString(item.content, 20)}</TableCell>
+                <TableCell>
+                  <IconButton color="inherit" onClick={(e) => handleClick(e, item)}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && selectedItem?.id === item.id} onClose={handleClose} elevation={1}>
+                    <MenuItem onClick={handleEdit}>
+                      <EditIcon /> Edit
+                    </MenuItem>
+                    <MenuItem onClick={() => handleDelete(item.id)}>
+                      <DeleteIcon /> Delete
+                    </MenuItem>
+                    <MenuItem onClick={() => handleView(item)}>
+                      <VisibilityIcon /> View
+                    </MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
@@ -302,64 +273,69 @@ const NewBlogTable = () => {
               <Typography variant="subtitle1">{selectedItemdata.title}</Typography>
               <Divider style={{ margin: "10px 0" }} />
               <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <DialogContentText>
-                    <strong>Date:</strong> {selectedItemdata.date}
-                  </DialogContentText>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2">Author: {selectedItemdata.author}</Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <DialogContentText>
-                    <strong>Time:</strong> {selectedItemdata.time}
-                  </DialogContentText>
-                </Grid>
-                <Grid item xs={12}>
-                  <DialogContentText>
-                    <strong>Content:</strong> {selectedItemdata.content}
-                  </DialogContentText>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2">Images:</Typography>
-                  {selectedItemdata.imageUrl.map((image, index) => (
-                    <Chip key={index} label={`Image ${index + 1}`} component="a" href={image} target="_blank" clickable />
-                  ))}
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2">Date: {selectedItemdata.date}</Typography>
                 </Grid>
               </Grid>
+              <Divider style={{ margin: "10px 0" }} />
+              {selectedItemdata.imageUrl.length > 0 && (
+                <>
+                  <Typography variant="subtitle2">Image:</Typography>
+                  <Avatar alt="Image" src={selectedItemdata.imageUrl[0]} style={{ width: "100%", height: "auto" }} />
+                </>
+              )}
+              <Divider style={{ margin: "10px 0" }} />
+              <Typography variant="subtitle2">Content:</Typography>
+              <Typography variant="body1" style={{ whiteSpace: "pre-wrap" }}>
+                {selectedItemdata.content}
+              </Typography>
             </>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDetailsModalClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openConfirmation} onClose={handleCancel}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Are you sure you want to delete this data?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel}>Cancel</Button>
-          <Button onClick={() => handleDeleteConfirmed()} color="error">
-            {loading ? <CircularProgress size={24} /> : "Delete"}
-          </Button>
+          <Button onClick={handleDetailsModalClose}>Close</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={editDialogOpen} onClose={handleEditCancel} maxWidth="md">
         <DialogTitle>Edit Blog</DialogTitle>
         <DialogContent>
-          <TextField label="Title" fullWidth margin="normal" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
-          <TextField label="Author" fullWidth margin="normal" value={editAuthor} onChange={(e) => setEditAuthor(e.target.value)} />
-          <TextField label="Content" fullWidth multiline rows={4} margin="normal" value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+          <DialogContentText>Edit the details of the blog.</DialogContentText>
+          <TextField autoFocus margin="dense" label="Title" type="text" fullWidth value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+          <TextField margin="dense" label="Author" type="text" fullWidth value={editAuthor} onChange={(e) => setEditAuthor(e.target.value)} />
+          <TextField
+            margin="dense"
+            label="Content"
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleEditCancel} color="primary">
+          <Button onClick={handleEditCancel}>Cancel</Button>
+          <Button onClick={handleEditSave} disabled={loading}>
+            {loading ? <CircularProgress size={24} /> : "Save"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openConfirmation} onClose={handleCancel}>
+        <DialogTitle>Delete Blog</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete this blog? This action cannot be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleEditSave} color="primary">
-            {loading ? <CircularProgress size={24} /> : "Save"}
+          <Button onClick={handleDeleteConfirmed} color="primary" autoFocus disabled={loading}>
+            {loading ? <CircularProgress size={24} /> : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
