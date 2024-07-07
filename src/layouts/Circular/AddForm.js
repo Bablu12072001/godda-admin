@@ -80,7 +80,23 @@ const AddForm = () => {
       date,
     });
   };
+  const handleInputChange = (prop) => (event) => {
+    let value = event.target.value;
 
+    // Check if the input is a date and adjust the formatting
+    if (event.target.type === "date") {
+      const selectedDate = new Date(event.target.value);
+      const formattedDate = `${selectedDate.getDate().toString().padStart(2, "0")}-${(selectedDate.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${selectedDate.getFullYear()}`;
+      value = formattedDate;
+    }
+
+    setFormData({
+      ...formData,
+      [prop]: value,
+    });
+  };
   const handlePdfChange = (e) => {
     const selectedFile = e.target.files[0];
     setPdf(selectedFile);
@@ -251,7 +267,7 @@ const AddForm = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <DatePicker
                 selected={formData.date}
                 onChange={handleDateChange}
@@ -259,6 +275,22 @@ const AddForm = () => {
                 placeholderText="Select Date"
                 className="form-control"
                 fullWidth
+                required
+              />
+            </Grid> */}
+            <Grid item xs={12} sm={12}>
+              <TextField
+                fullWidth
+                label="Date"
+                type="date"
+                value={formData.formattedDate}
+                onChange={handleInputChange("date")}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  inputProps: { style: { textTransform: "uppercase" } }, // Display input in uppercase
+                }}
                 required
               />
             </Grid>

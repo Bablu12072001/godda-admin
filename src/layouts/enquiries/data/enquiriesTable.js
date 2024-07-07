@@ -9,18 +9,35 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
 import Swal from "sweetalert2";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { accessToken } from "services/variables";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-// import MDTypography from "components/MDTypography";
 
 const EnquiriesTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [contactData, setContactData] = useState([]);
-  const [pageReload, setPageRelaod] = useState(false);
+  const [pageReload, setPageReload] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [editedContact, setEditedContact] = useState({
+    oldOfficeName: "",
+    newOfficeName: "",
+    block: "",
+    email: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +66,6 @@ const EnquiriesTable = () => {
   };
 
   const handleDelete = async (officeName) => {
-    // Show SweetAlert confirmation
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You will not be able to recover this record!",
@@ -62,23 +78,70 @@ const EnquiriesTable = () => {
 
     if (result.isConfirmed) {
       try {
-        // Delete record using delete API
-        const temp = await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/delete_office", {
+        await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/delete_office", {
           headers: {
             Authorization: accessToken(),
           },
           data: { officeName },
         });
-        console.log("Delete", temp);
-
-        // Trigger reload to update the table
-        setPageRelaod(!pageReload);
+        setPageReload(!pageReload);
         Swal.fire("Deleted!", "The record has been deleted.", "success");
       } catch (error) {
         console.error("Error deleting enquiry:", error);
         Swal.fire("Error", "An error occurred while deleting the record.", "error");
       }
     }
+  };
+
+  const handleEditClick = (contact) => {
+    setSelectedContact(contact);
+    setEditedContact({
+      oldOfficeName: contact.officeName,
+      newOfficeName: contact.officeName,
+      block: contact.block,
+      email: contact.email,
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditChange = (event) => {
+    const { name, value } = event.target;
+    setEditedContact((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async () => {
+    const { oldOfficeName, newOfficeName, email, block } = editedContact;
+    try {
+      await axios.put(
+        "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/eidt_office",
+        {
+          oldOfficeName,
+          newOfficeName,
+          email,
+          block,
+        },
+        {
+          headers: {
+            Authorization: accessToken(),
+          },
+        }
+      );
+      setEditDialogOpen(false);
+      setPageReload(!pageReload);
+      Swal.fire("Updated!", "The record has been updated.", "success");
+    } catch (error) {
+      console.error("Error updating enquiry:", error);
+      Swal.fire("Error", "An error occurred while updating the record.", "error");
+    }
+  };
+
+  const handleMenuOpen = (event, contact) => {
+    setSelectedContact(contact);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -102,9 +165,13 @@ const EnquiriesTable = () => {
                 <TableCell>{contact.block}</TableCell>
                 <TableCell>{contact.email}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="info" onClick={() => handleDelete(contact.officeName)}>
-                    Delete
-                  </Button>
+                  <IconButton onClick={(event) => handleMenuOpen(event, contact)}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && selectedContact?.officeName === contact.officeName} onClose={handleMenuClose}>
+                    <MenuItem onClick={() => handleEditClick(contact)}>Edit</MenuItem>
+                    <MenuItem onClick={() => handleDelete(contact.officeName)}>Delete</MenuItem>
+                  </Menu>
                 </TableCell>
               </TableRow>
             ))}
@@ -120,6 +187,30 @@ const EnquiriesTable = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+        <DialogTitle>Edit Contact</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="District Office Name"
+            type="text"
+            fullWidth
+            name="newOfficeName"
+            value={editedContact.newOfficeName}
+            onChange={handleEditChange}
+          />
+          <TextField margin="dense" label="Block" type="text" fullWidth name="block" value={editedContact.block} onChange={handleEditChange} />
+          <TextField margin="dense" label="Email" type="email" fullWidth name="email" value={editedContact.email} onChange={handleEditChange} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleEditSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

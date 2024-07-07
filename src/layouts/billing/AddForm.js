@@ -115,6 +115,8 @@ const LeadershipForm = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField select required id="team" name="team" label="Team" fullWidth value={formData.team} onChange={handleChange}>
+                <MenuItem value="international leadership team">International Leadership Team</MenuItem>
+                <MenuItem value="national leadership team">National Leadership Team</MenuItem>
                 <MenuItem value="state leadership team">State Leadership Team</MenuItem>
                 <MenuItem value="district leadership team">District Leadership Team</MenuItem>
                 <MenuItem value="block leadership team">Block Leadership Team</MenuItem>

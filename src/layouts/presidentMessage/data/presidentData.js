@@ -16,9 +16,10 @@ const PresidentData = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedMessage, setEditedMessage] = useState("");
-  const [editedImage, setEditedImage] = useState("");
+  const [editedImage, setEditedImage] = useState(null); // Use null for better image state management
   const [openDialog, setOpenDialog] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [imagePreview, setImagePreview] = useState(""); // State to hold image preview URL
   const [imageTimestamp, setImageTimestamp] = useState(Date.now()); // New state to track image updates
 
   useEffect(() => {
@@ -56,11 +57,15 @@ const PresidentData = () => {
         setUpdating(true);
 
         const updateData = {
-          name: editedName || presidentData.name,
           message: editedMessage || presidentData.message,
-          // base64: editedImage || presidentData.base64,
-          base64: editedImage ? editedImage.split(",")[1] : presidentData.base64,
+          name: editedName || presidentData.name,
         };
+
+        if (editedImage && editedImage !== presidentData.imageUrl) {
+          updateData.base64 = editedImage.split(",")[1];
+        } else {
+          updateData.imageUrl = presidentData.imageUrl;
+        }
 
         axios
           .put("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_president_message", updateData, {
@@ -83,11 +88,11 @@ const PresidentData = () => {
             setImageTimestamp(Date.now());
           })
           .catch((error) => {
-            console.error("Error updating about us data:", error);
+            console.error("Error updating president data:", error);
             // Show error message using SweetAlert2
             Swal.fire({
               title: "Update Failed",
-              text: "Failed to update about us data. Please try again.",
+              text: "Failed to update president data. Please try again.",
               icon: "error",
             });
           })
@@ -103,7 +108,7 @@ const PresidentData = () => {
     // Set the edited name and message when opening the dialog in edit mode
     setEditedName(presidentData.name);
     setEditedMessage(presidentData.message);
-    setEditedImage(presidentData.imageUrl);
+    setEditedImage(presidentData.imageUrl); // Reset edited image state to null initially
 
     // Open the Material-UI Dialog
     setOpenDialog(true);
@@ -120,6 +125,7 @@ const PresidentData = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setEditedImage(reader.result);
+        // setImagePreview(reader.result); // Update image preview
       };
       reader.readAsDataURL(file);
     }
@@ -146,7 +152,6 @@ const PresidentData = () => {
           <Button
             variant="contained"
             color="info"
-            // color="primary"
             onClick={() => {
               setEditMode(true);
               handleDialogOpen();
@@ -160,7 +165,7 @@ const PresidentData = () => {
             <DialogTitle>Edit President Data</DialogTitle>
             <DialogContent>
               {/* Image Preview */}
-              {editedImage ? (
+              {editedImage && editedImage !== presidentData.imageUrl ? (
                 <img src={editedImage} alt="Preview" className="rounded-full w-20 h-20" />
               ) : (
                 <img src={`${presidentData.imageUrl}?timestamp=${imageTimestamp}`} alt="Previous" className="rounded-full w-20 h-20" />

@@ -191,7 +191,39 @@ export default function Circular() {
   return (
     <>
       <div className="">
+        <Button
+          variant="contained"
+          color="warning"
+          style={{ marginLeft: "auto", marginRight: "5vw" }}
+          onClick={() => {
+            navigate("/add-Leadrship");
+          }}
+        >
+          Add Leadership Team
+        </Button>
+        <br />
+        <br />
         <Stack direction="row" spacing={5}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              fetchFilteredData("International Leadership Team");
+              setText("International Leadership Team");
+            }}
+          >
+            International Leadership Team
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              fetchFilteredData("National Leadership Team");
+              setText("National Leadership Team");
+            }}
+          >
+            National Leadership Team
+          </Button>
           <Button
             variant="contained"
             color="success"
@@ -221,16 +253,6 @@ export default function Circular() {
             }}
           >
             Block Leadership Team
-          </Button>
-          <Button
-            variant="contained"
-            color="warning"
-            style={{ marginLeft: "auto", marginRight: "5vw" }}
-            onClick={() => {
-              navigate("/add-Leadrship");
-            }}
-          >
-            Add
           </Button>
         </Stack>
         <br />

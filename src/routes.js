@@ -341,7 +341,7 @@ if (decoded?.role === "admin") {
       key: "office's",
       icon: <Icon fontSize="small">table_view</Icon>,
       // icon: <Icon fontSize="small">AccountGroup</Icon>,
-      route: "/offic's",
+      route: "/office's",
       component: <EnquiriesTables />,
     },
     {

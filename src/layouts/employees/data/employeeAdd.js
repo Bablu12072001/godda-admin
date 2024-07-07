@@ -572,8 +572,8 @@ function EmployeeAdd() {
                         label="Declaration"
                       />
                       <Typography>
-                        I hereby declare that i will follow the terms and conditions of the federation. i want to be a member of jharkhand state none-gazetted
-                        employees federation, godda.
+                        I hereby declare that I will follow the terms and conditions of the federation. I want to be a member of Jharkhand State Non-Gazetted
+                        Employees Federation, Godda.
                       </Typography>
                     </Grid>
                   </CardContent>
