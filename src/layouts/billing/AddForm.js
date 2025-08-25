@@ -119,6 +119,7 @@ const LeadershipForm = () => {
                 <MenuItem value="national leadership team">National Leadership Team</MenuItem>
                 <MenuItem value="state leadership team">State Leadership Team</MenuItem>
                 <MenuItem value="district leadership team">District Leadership Team</MenuItem>
+                <MenuItem value="divisional leadership team">Divisional leadership Team</MenuItem>
                 <MenuItem value="block leadership team">Block Leadership Team</MenuItem>
               </TextField>
             </Grid>

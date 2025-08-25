@@ -22,6 +22,8 @@ import {
   TableHead,
   TablePagination,
   Avatar,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -56,6 +58,8 @@ export default function Circular() {
       <br />
     </>
   ));
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const fetchFilteredData = async (teamType) => {
     try {
@@ -188,6 +192,10 @@ export default function Circular() {
     }
   }, [page, rowsPerPage]);
 
+  const capitalizeFirstLetter = (text) => {
+    return text?.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase()) || "";
+  };
+
   return (
     <>
       <div className="">
@@ -203,7 +211,7 @@ export default function Circular() {
         </Button>
         <br />
         <br />
-        <Stack direction="row" spacing={5}>
+        <Stack direction={isSmallScreen ? "column" : "row"} spacing={2} alignItems={isSmallScreen ? "stretch" : "center"}>
           <Button
             variant="contained"
             color="success"
@@ -238,12 +246,23 @@ export default function Circular() {
             variant="contained"
             color="success"
             onClick={() => {
+              fetchFilteredData("Divisional leadership Team");
+              setText("Divisional leadership Team");
+            }}
+          >
+            Divisional leadership Team
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
               fetchFilteredData("District Leadership Team");
               setText("District Leadership Team");
             }}
           >
             District Leadership Team
           </Button>
+
           <Button
             variant="contained"
             color="success"
@@ -283,10 +302,10 @@ export default function Circular() {
                         {(rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map((item, index) => (
                           <TableRow key={index}>
                             <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.district}</TableCell>
-                            <TableCell>{item.message}</TableCell>
-                            <TableCell>{item.position}</TableCell>
+                            <TableCell>{capitalizeFirstLetter(item.name)}</TableCell>
+                            <TableCell>{capitalizeFirstLetter(item.district)}</TableCell>
+                            <TableCell>{capitalizeFirstLetter(item.message)}</TableCell>
+                            <TableCell>{capitalizeFirstLetter(item.position)}</TableCell>
                             <TableCell>
                               <Avatar alt={item.name} src={item.imageUrl} />
                             </TableCell>

@@ -271,6 +271,9 @@ const leadrshipTableList = () => {
       return str;
     }
   };
+  const capitalizeFirstLetter = (text) => {
+    return text?.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase()) || "";
+  };
 
   return (
     <div>
@@ -297,28 +300,107 @@ const leadrshipTableList = () => {
             {newsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
               <React.Fragment key={item.email_id}>
                 <TableRow>
-                  <TableCell>{item.employeeId}</TableCell>
-                  <TableCell>{<Avatar alt="Image" src={item.profile_image}></Avatar>}</TableCell>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.designation}</TableCell>
-                  <TableCell>{item.department}</TableCell>
-                  <TableCell>{item.joiningDate}</TableCell>
-                  <TableCell>{item.employeeType}</TableCell>
-                  <TableCell>{item.lastSixDigitOfAadhar}</TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {item.employeeId}
+                  </TableCell>
 
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    <Avatar alt="Image" src={item.profile_image} />
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {capitalizeFirstLetter(item.name)}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {capitalizeFirstLetter(item.designation)}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {capitalizeFirstLetter(item.department)}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {item.joiningDate}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {capitalizeFirstLetter(item.employeeType)}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontSize: 12,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {item.lastSixDigitOfAadhar}
+                  </TableCell>
+
+                  <TableCell sx={{ fontSize: 12 }}>
                     <IconButton color="inherit" onClick={(e) => handleClick(e, item)}>
                       <MoreVertIcon />
                     </IconButton>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl) && selectedItem?.email_id === item.email_id} onClose={handleClose} elevation={1}>
                       <MenuItem onClick={handleEdit}>
-                        <EditIcon /> Edit
+                        <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
                       </MenuItem>
                       <MenuItem onClick={() => handleDelete(item.email_id)}>
-                        <DeleteIcon /> Delete
+                        <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Delete
                       </MenuItem>
                       <MenuItem onClick={() => handleView(item)}>
-                        <VisibilityIcon /> View
+                        <VisibilityIcon fontSize="small" sx={{ mr: 1 }} /> View
                       </MenuItem>
                     </Menu>
                   </TableCell>
@@ -404,6 +486,7 @@ const leadrshipTableList = () => {
 
                       <Chip label="Profile Image" component="a" href={selectedItem.profile_image} target="_blank" clickable />
                       <Chip label="Signature Image" component="a" href={selectedItem.sign_image} target="_blank" clickable />
+                      <Chip label="Upload Form" component="a" href={selectedItem.form} target="_blank" clickable />
                     </Grid>
                   </CardContent>
                 </Card>

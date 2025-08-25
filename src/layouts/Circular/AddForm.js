@@ -260,10 +260,10 @@ const AddForm = () => {
                   style={{ height: "45px" }}
                   required
                 >
-                  <MenuItem value="resolution">Resolution</MenuItem>
-                  <MenuItem value="notice">Notice</MenuItem>
-
+                  <MenuItem value="documents">JSNGEF Documents</MenuItem>
+                  <MenuItem value="resolution">Acts & Rules</MenuItem>
                   <MenuItem value="circular">Circular</MenuItem>
+                  <MenuItem value="notice">Notice</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -272,6 +272,7 @@ const AddForm = () => {
                 selected={formData.date}
                 onChange={handleDateChange}
                 dateFormat="dd/MM/yyyy"
+
                 placeholderText="Select Date"
                 className="form-control"
                 fullWidth

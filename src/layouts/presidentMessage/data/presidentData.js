@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import {
+  CircularProgress,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Grid,
+} from "@mui/material";
 import Swal from "sweetalert2";
 import { accessToken } from "services/variables";
 
@@ -16,14 +23,12 @@ const PresidentData = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedMessage, setEditedMessage] = useState("");
-  const [editedImage, setEditedImage] = useState(null); // Use null for better image state management
+  const [editedImage, setEditedImage] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [imagePreview, setImagePreview] = useState(""); // State to hold image preview URL
-  const [imageTimestamp, setImageTimestamp] = useState(Date.now()); // New state to track image updates
+  const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
   useEffect(() => {
-    // Fetch President Data on component mount
     fetchPresidentData();
   }, []);
 
@@ -42,7 +47,6 @@ const PresidentData = () => {
 
   const handleUpdate = () => {
     setOpenDialog(false);
-    // Display SweetAlert2 for confirmation with circular loading
     Swal.fire({
       title: "Update Confirmation",
       html: updating ? '<div style="z-index: 9999;"><CircularProgress size={20} /></div>' : "Are you sure you want to update the president data?",
@@ -53,7 +57,6 @@ const PresidentData = () => {
       confirmButtonText: "Yes, update it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        // If confirmed, set updating state to true
         setUpdating(true);
 
         const updateData = {
@@ -73,31 +76,18 @@ const PresidentData = () => {
               Authorization: accessToken(),
             },
           })
-          .then((response) => {
-            // Show success message using SweetAlert2
-            Swal.fire({
-              title: "Update Successful",
-              text: "President data has been updated successfully!",
-              icon: "success",
-            });
+          .then(() => {
+            Swal.fire("Success", "President data has been updated!", "success");
             setEditMode(false);
             setOpenDialog(false);
-            // Refresh data after successful update
             fetchPresidentData();
-            // Generate new timestamp to force image update
             setImageTimestamp(Date.now());
           })
           .catch((error) => {
             console.error("Error updating president data:", error);
-            // Show error message using SweetAlert2
-            Swal.fire({
-              title: "Update Failed",
-              text: "Failed to update president data. Please try again.",
-              icon: "error",
-            });
+            Swal.fire("Error", "Failed to update president data.", "error");
           })
           .finally(() => {
-            // Set updating state to false after the update process
             setUpdating(false);
           });
       }
@@ -105,17 +95,13 @@ const PresidentData = () => {
   };
 
   const handleDialogOpen = () => {
-    // Set the edited name and message when opening the dialog in edit mode
     setEditedName(presidentData.name);
     setEditedMessage(presidentData.message);
-    setEditedImage(presidentData.imageUrl); // Reset edited image state to null initially
-
-    // Open the Material-UI Dialog
+    setEditedImage(presidentData.imageUrl);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
-    // Close the Material-UI Dialog
     setOpenDialog(false);
   };
 
@@ -125,85 +111,97 @@ const PresidentData = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setEditedImage(reader.result);
-        // setImagePreview(reader.result); // Update image preview
       };
       reader.readAsDataURL(file);
     }
   };
 
   return (
-    <div className="container mx-auto mt-8" style={{ margin: "20px" }}>
+    <div style={{ margin: "20px" }}>
       {loading ? (
-        // Display CircularProgress while loading
-        <div className="flex justify-center">
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </div>
       ) : (
-        // Display president data when not loading
-        <div>
-          <img src={`${presidentData.imageUrl}?timestamp=${imageTimestamp}`} alt="President" className="rounded-full w-20 h-20" />
-          <h1 className="text-2xl font-bold mt-4">{presidentData.name}</h1>
-          <p className="mt-2, mr-8">{presidentData.message}</p>
-          <p className="mt-2, mb-2">
-            Last Update: {presidentData.lastUpdate} {presidentData.lastUpdateTime}
-          </p>
+        <Card
+          sx={{
+            maxWidth: 700,
+            margin: "auto",
+            padding: "20px",
+            boxShadow: 3,
+            borderRadius: 4,
+            textAlign: "center",
+          }}
+        >
+          <CardContent>
+            <Avatar
+              src={`${presidentData.imageUrl}?timestamp=${imageTimestamp}`}
+              alt="President"
+              sx={{
+                width: 120,
+                height: 120,
+                margin: "auto",
+                boxShadow: 2,
+                border: "4px solid #1976d2",
+              }}
+            />
+            <Typography variant="h5" sx={{ mt: 2, fontWeight: "bold" }}>
+              {presidentData.name}
+            </Typography>
+            <Typography variant="body1" sx={{ mt: 1, mb: 2 }}>
+              {presidentData.message}
+            </Typography>
+            <Typography variant="caption" display="block" gutterBottom>
+              Last Update: {presidentData.lastUpdate} {presidentData.lastUpdateTime}
+            </Typography>
 
-          {/* Button to toggle edit mode */}
-          <Button
-            variant="contained"
-            color="info"
-            onClick={() => {
-              setEditMode(true);
-              handleDialogOpen();
-            }}
-          >
-            Edit President Data
-          </Button>
+            <Button variant="contained" color="info" onClick={handleDialogOpen} sx={{ mt: 2 }}>
+              Edit President Data
+            </Button>
+          </CardContent>
 
-          {/* Material-UI Dialog for editing */}
-          <Dialog open={openDialog} onClose={handleDialogClose}>
+          {/* Edit Dialog */}
+          <Dialog open={openDialog} onClose={handleDialogClose} fullWidth maxWidth="sm">
             <DialogTitle>Edit President Data</DialogTitle>
             <DialogContent>
-              {/* Image Preview */}
-              {editedImage && editedImage !== presidentData.imageUrl ? (
-                <img src={editedImage} alt="Preview" className="rounded-full w-20 h-20" />
-              ) : (
-                <img src={`${presidentData.imageUrl}?timestamp=${imageTimestamp}`} alt="Previous" className="rounded-full w-20 h-20" />
-              )}
+              <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <Grid item>
+                  <Avatar
+                    src={editedImage && editedImage !== presidentData.imageUrl ? editedImage : `${presidentData.imageUrl}?timestamp=${imageTimestamp}`}
+                    alt="Preview"
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      border: "3px solid #2196f3",
+                      marginTop: 1,
+                    }}
+                  />
+                </Grid>
+              </Grid>
 
-              {/* Input fields */}
-              <TextField
-                label="Name"
-                variant="outlined"
-                fullWidth
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                sx={{ marginTop: "10px", margin: "5px" }}
-              />
+              <TextField label="Name" fullWidth variant="outlined" margin="dense" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
               <TextField
                 label="Message"
-                variant="outlined"
                 fullWidth
                 multiline
                 rows={4}
+                variant="outlined"
+                margin="dense"
                 value={editedMessage}
                 onChange={(e) => setEditedMessage(e.target.value)}
-                sx={{ margin: "5px" }}
               />
-              {/* Input field for selecting a new image */}
-              <input type="file" accept="image/*" onChange={handleImageChange} style={{ margin: "5px" }} />
+              <input type="file" accept="image/*" onChange={handleImageChange} style={{ marginTop: "10px" }} />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleDialogClose} color="secondary">
                 Cancel
               </Button>
-              {/* Display CircularProgress while updating */}
               <Button onClick={handleUpdate} color="primary" disabled={updating}>
                 {updating ? <CircularProgress size={20} /> : "Update"}
               </Button>
             </DialogActions>
           </Dialog>
-        </div>
+        </Card>
       )}
     </div>
   );

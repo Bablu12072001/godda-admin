@@ -92,6 +92,10 @@ function EmployeeAdd() {
       name: "",
       base64: "",
     },
+    form: {
+      name: "",
+      base64: "",
+    },
   });
 
   const handleInputChange = (prop) => (event) => {
@@ -176,6 +180,10 @@ function EmployeeAdd() {
             base64: "",
           },
           image: {
+            name: "",
+            base64: "",
+          },
+          form: {
             name: "",
             base64: "",
           },
@@ -293,12 +301,13 @@ function EmployeeAdd() {
                           <TextField fullWidth label="Block" select value={formData.block} onChange={handleInputChange("block")} required>
                             <MenuItem value="basantrai">Basantrai</MenuItem>
                             <MenuItem value="boarijore">Boarijore</MenuItem>
-                            <MenuItem value="bodda">Godda</MenuItem>
-                            <MenuItem value="bahagama">Mahagama</MenuItem>
-                            <MenuItem value="beharma">Meharma</MenuItem>
-                            <MenuItem value="bathergama">Pathergama</MenuItem>
-                            <MenuItem value="boraiyahat">Poraiyahat</MenuItem>
-                            <MenuItem value="bunderpahari">Sunderpahari</MenuItem>
+                            <MenuItem value="godda">Godda</MenuItem>
+                            <MenuItem value="mahagama">Mahagama</MenuItem>
+                            <MenuItem value="meharma">Meharma</MenuItem>
+                            <MenuItem value="pathergama">Pathergama</MenuItem>
+                            <MenuItem value="poraiyahat">Poraiyahat</MenuItem>
+                            <MenuItem value="sunderpahari">Sunderpahari</MenuItem>
+                            <MenuItem value="thakurgangti">Thakurgangti</MenuItem>
                           </TextField>
                         </Grid>
                       )}
@@ -489,6 +498,10 @@ function EmployeeAdd() {
                           Upload Signature
                         </Typography>
                         <input type="file" accept="image/*" onChange={handleFileInputChange("sign")} style={{ marginBottom: "10px" }} />
+                        <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                          Upload Form
+                        </Typography>
+                        <input type="file" accept="pdf/*" onChange={handleFileInputChange("form")} style={{ marginBottom: "10px" }} />
                       </Grid>
                     </Grid>
                     <Grid item xs={12}>

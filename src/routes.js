@@ -55,7 +55,9 @@ import TrainingVideo from "layouts/TrainingVideo";
 import PhotoUpload from "layouts/PhotoUpload";
 
 import Circular from "layouts/Circular";
+import Datarate from "layouts/DARATE";
 import AddForm from "layouts/Circular/AddForm";
+import AddPRC from "layouts/DARATE/AddFormD";
 import AddFormLeadr from "layouts/billing/AddForm";
 
 import PollList from "layouts/Voting/PollList";
@@ -78,9 +80,13 @@ import { useRouter } from "hooks";
 import { jwtDecode } from "jwt-decode";
 import MissionVision from "layouts/missionVision";
 import WeeklyNotices from "layouts/Weekly-Notices";
+import Dictionary from "layouts/Dictionary";
 import WeeklyNoticeAdd from "layouts/Weekly-Notices/data/WeeklyNoticeAdd";
 import Affilationadd from "layouts/Affiliation/data/Affiliation-add";
+import DictionaryAdd from "layouts/Dictionary/data/DictionaryAdd";
 import Affiliation from "layouts/Affiliation";
+import UploadFormList from "layouts/employees/UploadFormList";
+
 // import Auth from "./Auth";
 
 let routes = [];
@@ -180,6 +186,14 @@ if (decoded?.role === "admin") {
       route: "/members",
       component: <EmployeeTables />,
     },
+    // {
+    //   type: "collapse",
+    //   name: "Upload Form List",
+    //   key: "uploadFormList",
+    //   icon: <Icon fontSize="small">upload_file</Icon>,
+    //   route: "/uploadFormList",
+    //   component: <UploadFormList />,
+    // },
 
     //news event
 
@@ -228,6 +242,15 @@ if (decoded?.role === "admin") {
       // icon: <Icon fontSize="small">AccountGroup</Icon>,
       route: "/affilation-add",
       component: <Affilationadd />,
+    },
+    {
+      // type: "collapse",
+      // name: "Employees",
+      key: "dictionary-add",
+      // icon: <Icon fontSize="small">table_view</Icon>,
+      // icon: <Icon fontSize="small">AccountGroup</Icon>,
+      route: "/dictionary-add",
+      component: <DictionaryAdd />,
     },
 
     //video from
@@ -296,8 +319,8 @@ if (decoded?.role === "admin") {
     // },
     {
       type: "collapse",
-      name: "LeaderShip Team",
-      key: "leaderShipTeam",
+      name: "Leadership Team",
+      key: "leadershipTeam",
       icon: <Icon fontSize="small">receipt_long</Icon>,
       route: "/leaderShipTeam",
       component: <Billing />,
@@ -334,25 +357,33 @@ if (decoded?.role === "admin") {
       route: "/circular",
       component: <Circular />,
     },
+    {
+      type: "collapse",
+      name: "DA RATE",
+      key: "DA RATE",
+      icon: <Icon fontSize="small">person</Icon>,
+      route: "/darate",
+      component: <Datarate />,
+    },
 
     {
       type: "collapse",
-      name: "Office's",
+      name: "Office Email List",
       key: "office's",
       icon: <Icon fontSize="small">table_view</Icon>,
       // icon: <Icon fontSize="small">AccountGroup</Icon>,
       route: "/office's",
       component: <EnquiriesTables />,
     },
-    {
-      type: "collapse",
-      name: "Contacts",
-      key: "contacts",
-      icon: <Icon fontSize="small">table_view</Icon>,
-      // icon: <Icon fontSize="small">AccountGroup</Icon>,
-      route: "/contacts",
-      component: <ContactsTables />,
-    },
+    // {
+    //   type: "collapse",
+    //   name: "Contacts",
+    //   key: "contacts",
+    //   icon: <Icon fontSize="small">table_view</Icon>,
+    //   // icon: <Icon fontSize="small">AccountGroup</Icon>,
+    //   route: "/contacts",
+    //   component: <ContactsTables />,
+    // },
 
     {
       type: "collapse",
@@ -396,6 +427,14 @@ if (decoded?.role === "admin") {
       route: "/WeeklyNoticeAdd",
       component: <WeeklyNoticeAdd />,
     },
+    {
+      type: "collapse",
+      name: "Dictionary",
+      key: "dictionary",
+      icon: <Icon fontSize="small">table_view</Icon>,
+      route: "/dictionary",
+      component: <Dictionary />,
+    },
 
     {
       type: "collapse",
@@ -405,6 +444,7 @@ if (decoded?.role === "admin") {
       route: "/scroll-image",
       component: <ScrollImages />,
     },
+
     {
       // type: "collapse",
       // name: "Sign In",
@@ -428,6 +468,14 @@ if (decoded?.role === "admin") {
       // icon: <Icon fontSize="small">assignment</Icon>,
       route: "/add",
       component: <AddForm />,
+    },
+    {
+      // type: "collapse",
+      // name: "Sign Up",
+      // key: "sign-up",
+      // icon: <Icon fontSize="small">assignment</Icon>,
+      route: "/addp",
+      component: <AddPRC />,
     },
     {
       // type: "collapse",

@@ -47,7 +47,8 @@ const EnquiriesTable = () => {
             Authorization: accessToken(),
           },
         });
-        setContactData(response.data["body-json"].body);
+        // console.log("office data", response.data["body-json"].body);
+        setContactData(JSON.parse(response.data["body-json"].body));
       } catch (error) {
         console.error("Error fetching contact data:", error);
       }
