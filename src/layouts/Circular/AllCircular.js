@@ -242,7 +242,7 @@ export default function Circular() {
       console.log("Sending update payload:", editData);
 
       const res = await axios.post(
-        "https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_circular_update",
+        "https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/godda_circular_update",
         {
           id: editData.id,
           title: editData.title,

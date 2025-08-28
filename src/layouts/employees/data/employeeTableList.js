@@ -486,7 +486,7 @@ const leadrshipTableList = () => {
 
                       <Chip label="Profile Image" component="a" href={selectedItem.profile_image} target="_blank" clickable />
                       <Chip label="Signature Image" component="a" href={selectedItem.sign_image} target="_blank" clickable />
-                      <Chip label="Upload Form" component="a" href={selectedItem.form} target="_blank" clickable />
+                      <Chip label="Upload Form" component="a" href={selectedItem.form_file} target="_blank" clickable />
                     </Grid>
                   </CardContent>
                 </Card>

@@ -50,12 +50,13 @@ const AffiliationList = () => {
     try {
       const response = await axios.get("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_affiliation_all_data", {
         headers: {
-          Authorization: accessToken(),
+          Authorization: `Bearer ${accessToken()}`,
         },
       });
       setNoticeData(response.data["body-json"].body);
     } catch (error) {
       console.error("Error fetching data:", error);
+      Swal.fire("Error", "Failed to fetch data.", "error");
     } finally {
       setLoading(false);
     }
@@ -85,10 +86,10 @@ const AffiliationList = () => {
         return;
       }
 
-      await axios.delete("https://vkfpe87plb.execute-api.ap-south-1.amazonaws.com/production/jmoa_affiliations_delete", {
+      await axios.post("https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_delete_affiliations", {
         data: { id: noticeId },
         headers: {
-          Authorization: accessToken(),
+          Authorization: `Bearer ${accessToken()}`,
         },
       });
 
@@ -117,13 +118,13 @@ const AffiliationList = () => {
         id: editData.id,
         title: editData.title,
         description: editData.description,
-        date: editData.date, // Format: dd/mm/yyyy
+        date: editData.date,
       };
 
-      const response = await axios.put("https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_edit_affiliations", JSON.stringify(payload), {
+      const response = await axios.post("https://kxu5bktpoi.execute-api.ap-south-1.amazonaws.com/JMOA/jmoa_update_affiliations", payload, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: accessToken(),
+          Authorization: `Bearer ${accessToken()}`,
         },
       });
 
@@ -136,7 +137,7 @@ const AffiliationList = () => {
       }
     } catch (error) {
       console.error("Error updating:", error);
-      Swal.fire("Error", "Failed to update the record. Server Error 500", "error");
+      Swal.fire("Error", "Failed to update the record.", "error");
     }
   };
 

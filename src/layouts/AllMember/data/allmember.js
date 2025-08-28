@@ -339,7 +339,7 @@ const AllMember = () => {
                     <Typography variant="subtitle2">Images:</Typography>
                     <Chip label="Profile Image" component="a" href={selectedEmployee.profile_image} target="_blank" clickable />
                     <Chip label="Signature Image" component="a" href={selectedEmployee.sign_image} target="_blank" clickable />
-                    <Chip label="Upload Form" component="a" href={selectedEmployee.form} target="_blank" clickable />
+                    <Chip label="Upload Form" component="a" href={selectedEmployee.form_file} target="_blank" clickable />
                   </Grid>
                 </CardContent>
               </Card>
